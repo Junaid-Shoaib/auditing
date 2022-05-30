@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use App\Models\Salary;
 use App\Models\AccountType;
+use App\Models\AccountGroup;
+use App\Models\Account;
 use Carbon\Carbon;
 
 class Excel extends Controller
@@ -36,33 +39,35 @@ class Excel extends Controller
 
                     if($col1 || $col2 || $col3 || $col4 || $col5)
                     {
-                    dd($row->getCellAtIndex(0));
 
                         //Account Type
                         $acc_type_name = $row->getCellAtIndex(0)->getValue();
+                        // dd($acc_type_name);
                         if($acc_type_name){
                             $acc_type = AccountType::where('name', $acc_type_name)->first();
                         }
 
 
+                        $fgn_grp_id;
                         //Account Group
                         $acc_grp_name = $row->getCellAtIndex(1)->getValue();
                         if($acc_grp_name)
                         {
                             $acc_grp_exist = AccountGroup::where('name', $acc_grp_name)->
-                                // where('company_id', session('company_id'))->
+                                where('company_id', session('company_id'))->
                                 first();
                             if(!$acc_grp_exist)
                             {
-                                // $acc_grp = AccountGroup::create([
-                                //     'type_id' => $acc_type->id,
-                                //     'parent_id' => null,
-                                //     'name' => $acc_grp_name,
-                                //     'company_id' => session('company_id'),
-                                // ]);
+                                $acc_grp = AccountGroup::create([
+                                    'type_id' => $acc_type->id,
+                                    'parent_id' => null,
+                                    'name' => $acc_grp_name,
+                                    'company_id' => session('company_id'),
+                                ]);
                             } else {
                                 $acc_grp = $acc_grp_exist;
                             }
+                            $fgn_grp_id = $acc_grp->id;
                         }
 
 
@@ -76,15 +81,16 @@ class Excel extends Controller
                                 first();
                             if(!$acc_sub_grp_exist)
                             {
-                                // $acc_sub_grp = AccountGroup::create([
-                                //     'type_id' => $acc_type->id,
-                                //     'parent_id' => $acc_grp->id,
-                                //     'name' => $acc_sub_grp_name,
-                                //     'company_id' => session('company_id'),
-                                // ]);
+                                $acc_sub_grp = AccountGroup::create([
+                                    'type_id' => $acc_type->id,
+                                    'parent_id' => $acc_grp->id,
+                                    'name' => $acc_sub_grp_name,
+                                    'company_id' => session('company_id'),
+                                ]);
                             } else {
                                 $acc_sub_grp = $acc_sub_grp_exist;
                             }
+                            $fgn_grp_id = $acc_sub_grp->id;
                         }
 
 
@@ -93,41 +99,38 @@ class Excel extends Controller
                         if($acc_name)
                         {
                             $acc_exist = Account::where('name', $acc_name)->
-                                // where('group_id', $acc_grp->id)->
-                                // where('company_id', session('company_id'))->
+                                where('group_id', $fgn_grp_id)->
+                                where('company_id', session('company_id'))->
                                 first();
                             if(!$acc_exist)
                             {
                                 $acc = Account::create([
                                     'name' => $acc_name,
-                                    'group_id' => $acc_sub_grp ? $acc_sub_grp->id :
-                                        $acc_grp ? $acc_grp->id : null,
+                                    'group_id' => $fgn_grp_id,
                                     'company_id' => session('company_id'),
                                 ]);
                             } else {
                                 $acc = $acc_exist;
                             }
-                        } else {
-                            break;
                         }
+                        //  else {
+                        //     break;
+                        // }
                     }
 
 
 
-                    dd($row->getCellAtIndex(1));
 
 
 
-
-
-                    $col1 = $row->getCellAtIndex(0); // id
-                    $col2 = $row->getCellAtIndex(1)->getValue(); // joining date - using getValue() method of Cell object to get actual date value
-                    $col3 = $row->getCellAtIndex(2); // name
-                    $col4 = $row->getCellAtIndex(3); // department
-                    $col5 = $row->getCellAtIndex(4); // designation
-                    $col6 = $row->getCellAtIndex(5); // gross salary
-                    $col7 = $row->getCellAtIndex(6); // medical
-                    $col8 = $row->getCellAtIndex(7); // conveyance
+                    // $col1 = $row->getCellAtIndex(0); // id
+                    // $col2 = $row->getCellAtIndex(1)->getValue(); // joining date - using getValue() method of Cell object to get actual date value
+                    // $col3 = $row->getCellAtIndex(2); // name
+                    // $col4 = $row->getCellAtIndex(3); // department
+                    // $col5 = $row->getCellAtIndex(4); // designation
+                    // $col6 = $row->getCellAtIndex(5); // gross salary
+                    // $col7 = $row->getCellAtIndex(6); // medical
+                    // $col8 = $row->getCellAtIndex(7); // conveyance
                     // Salary::create([
                     //     // no need to insert $col1 as the id auto-generates
                     //     'joining_date' => $col2,
@@ -143,5 +146,7 @@ class Excel extends Controller
             }
             $reader->close();
         }
+
+        return Redirect::route('companies');
     }
 }
