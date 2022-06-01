@@ -490,6 +490,12 @@ export default {
         { href: route("dashboard"), label: "Dashboard", icon: HomeIcon },
         { href: route("companies"), label: "Companies", icon: HomeIcon },
         { href: route("years"), label: "Years", icon: HeartIcon },
+        {
+          href: route("accountgroups"),
+          label: "Account Groups",
+          icon: HeartIcon,
+        },
+        { href: route("accounts"), label: "Accounts", icon: HeartIcon },
         { href: route("excel"), label: "Read Excel", icon: ChatIcon },
       ],
       libraryNavigation: [

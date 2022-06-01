@@ -80,6 +80,22 @@ class CreateCoreTables extends Migration
             $table->timestamps();
         });
 
+        Schema::create('trials', function (Blueprint $table) {
+            $table->id();
+            $table->decimal('opn_debit',14,2);
+            $table->decimal('remain_debit',14,2);
+            $table->decimal('cls_debit',14,2);
+            $table->decimal('opn_credit',14,2);
+            $table->decimal('remain_credit',14,2);
+            $table->decimal('cls_credit',14,2);
+            $table->tinyInteger('enabled')->default('1');
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('account_id');
+            $table->foreign('company_id')->references('id')->on('companies');
+            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->timestamps();
+        });
+
         // Schema::create('document_types', function (Blueprint $table) {
         //     $table->id();
         //     $table->string('name');

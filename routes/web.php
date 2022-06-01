@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\YearController;
+use App\Http\Controllers\AccountGroupController;
+use App\Http\Controllers\AccountController;
 
 // To read Excel file
 use App\Http\Controllers\Excel;
@@ -114,6 +116,67 @@ Route::get('years/{year}/close', [YearController::class, 'close'])
     ->middleware('auth');
 //YEARS ------------------------------------ END ------------------
 
+
+//ACCOUNTS GROUPS ----------------------- END --------------------
+// Route::get('accountgroups/generate', [GroupSeeder::class, 'run'])
+//     ->name('accountgroups.generate')
+//     ->middleware('auth');
+
+Route::get('accountgroups', [AccountGroupController::class, 'index'])
+    ->name('accountgroups')
+    ->middleware('auth');
+
+Route::get('accountgroups/create', [AccountGroupController::class, 'create'])
+    ->name('accountgroups.create')
+    ->middleware('auth');
+
+Route::post('accountgroups/create', [AccountGroupController::class, 'create'])
+    ->name('accountgroups.create')
+    ->middleware('auth');
+
+Route::post('accountgroups', [AccountGroupController::class, 'store'])
+    ->name('accountgroups.store')
+    ->middleware('auth');
+
+Route::get('accountgroups/{accountgroup}/edit', [AccountGroupController::class, 'edit'])
+    ->name('accountgroups.edit')
+    ->middleware('auth');
+
+Route::put('accountgroups/{accountgroup}', [AccountGroupController::class, 'update'])
+    ->name('accountgroups.update')
+    ->middleware('auth');
+
+Route::delete('accountgroups/{accountgroup}', [AccountGroupController::class, 'destroy'])
+    ->name('accountgroups.destroy')
+    ->middleware('auth');
+//ACCOUNTS GROUPS ----------------------- END --------------------
+
+
+//ACCOUNTS ----------------------- STARTS --------------------
+Route::get('accounts', [AccountController::class, 'index'])
+    ->name('accounts')
+    ->middleware('auth');
+
+Route::get('accounts/create', [AccountController::class, 'create'])
+    ->name('accounts.create')
+    ->middleware('auth');
+
+Route::post('accounts', [AccountController::class, 'store'])
+    ->name('accounts.store')
+    ->middleware('auth');
+
+Route::get('accounts/{account}/edit', [AccountController::class, 'edit'])
+    ->name('accounts.edit')
+    ->middleware('auth');
+
+Route::put('accounts/{account}', [AccountController::class, 'update'])
+    ->name('accounts.update')
+    ->middleware('auth');
+
+Route::delete('accounts/{account}', [AccountController::class, 'destroy'])
+    ->name('accounts.destroy')
+    ->middleware('auth');
+//ACCOUNTS ----------------------- END --------------------
 
 
 

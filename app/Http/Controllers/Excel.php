@@ -9,6 +9,7 @@ use App\Models\Salary;
 use App\Models\AccountType;
 use App\Models\AccountGroup;
 use App\Models\Account;
+use App\Models\Trial;
 use Carbon\Carbon;
 
 class Excel extends Controller
@@ -93,6 +94,28 @@ class Excel extends Controller
                             $fgn_grp_id = $acc_sub_grp->id;
                         }
 
+                        //Account Sub-sub Group
+                        $acc_sub_sub_grp_name = $row->getCellAtIndex(3)->getValue();
+                        if($acc_sub_sub_grp_name)
+                        {
+                            $acc_sub_sub_grp_exist = AccountGroup::where('name', $acc_sub_sub_grp_name)->
+                                where('parent_id', $acc_grp->id)->
+                                // where('company_id', session('company_id'))->
+                                first();
+                            if(!$acc_sub_sub_grp_exist)
+                            {
+                                $acc_sub_sub_grp = AccountGroup::create([
+                                    'type_id' => $acc_type->id,
+                                    'parent_id' => $acc_sub_grp->id,
+                                    'name' => $acc_sub_sub_grp_name,
+                                    'company_id' => session('company_id'),
+                                ]);
+                            } else {
+                                $acc_sub_sub_grp = $acc_sub_sub_grp_exist;
+                            }
+                            $fgn_grp_id = $acc_sub_sub_grp->id;
+                        }
+
 
                         //Accounts
                         $acc_name = $row->getCellAtIndex(4)->getValue();
@@ -112,6 +135,50 @@ class Excel extends Controller
                             } else {
                                 $acc = $acc_exist;
                             }
+
+                            //For Trial table ----------------------------------------- START ---------------------------------
+                            $opn_debit = $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : 0;
+                            $opn_credit = $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : 0;
+
+                            $remain_debit = $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() :  0;
+                            $remain_credit = $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : 0;
+
+                            $cls_debit = $row->getCellAtIndex(9)->getValue() ? $row->getCellAtIndex(9)->getValue() : 0;
+                            $cls_credit = $row->getCellAtIndex(10)->getValue() ? $row->getCellAtIndex(10)->getValue() : 0;
+
+                            $trial_exists = Trial::where('company_id', session('company_id'))
+                                ->where('account_id', $acc->id)->first();
+
+                            if($trial_exists)
+                            {
+                                $trial_exists->opn_debit = $opn_debit;
+                                $trial_exists->opn_credit = $opn_credit;
+
+                                $trial_exists->remain_debit = $remain_debit;
+                                $trial_exists->remain_credit = $remain_credit;
+
+                                $trial_exists->cls_debit = $cls_debit;
+                                $trial_exists->cls_credit = $cls_credit;
+
+                                $trial_exists->account_id = $acc->id;
+                                $trial_exists->company_id = session('company_id');
+
+                            } else {
+                                Trial::create([
+                                    'opn_debit' => $opn_debit,
+                                    'opn_credit' => $opn_credit,
+
+                                    'remain_debit' => $remain_debit,
+                                    'remain_credit' => $remain_credit,
+
+                                    'cls_debit' => $cls_debit,
+                                    'cls_credit' => $cls_credit,
+
+                                    'account_id' => $acc->id,
+                                    'company_id' => session('company_id'),
+                                ]);
+                            }
+                            //For Trial table ----------------------------------------- START ---------------------------------
                         }
                         //  else {
                         //     break;
