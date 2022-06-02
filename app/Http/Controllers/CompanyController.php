@@ -21,7 +21,7 @@ use App\Models\Document;
 use App\Models\Entry;
 use App\Models\DocumentType;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -152,8 +152,11 @@ class CompanyController extends Controller
             session(['company_id' => $company->id]);
             session(['year_id' => $year->id]);
 
-            // Storage::makeDirectory('/public/' . $company->id);
-            // Storage::makeDirectory('/public/' . $company->id . '/' . $year->id);
+            Storage::makeDirectory('/public/' . $company->id);
+            Storage::makeDirectory('/public/' . $company->id . '/' . $year->id);
+            Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/planing');
+            Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/execution');
+            Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/completion');
         });
         return Redirect::route('companies')->with('success', 'Company created');
     }

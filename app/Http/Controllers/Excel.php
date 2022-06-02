@@ -11,6 +11,7 @@ use App\Models\AccountGroup;
 use App\Models\Account;
 use App\Models\Trial;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class Excel extends Controller
 {
@@ -132,6 +133,9 @@ class Excel extends Controller
                                     'group_id' => $fgn_grp_id,
                                     'company_id' => session('company_id'),
                                 ]);
+                                $accountGroupforFolder = AccountGroup::find($fgn_grp_id);
+                                Storage::makeDirectory('/public/' . session('company_id') .
+                                     '/' . session('year_id') . '/execution/' . $accountGroupforFolder->name);
                             } else {
                                 $acc = $acc_exist;
                             }
