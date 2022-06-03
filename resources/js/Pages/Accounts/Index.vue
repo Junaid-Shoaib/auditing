@@ -1,7 +1,7 @@
 <template>
   <app-layout>
     <template #header>
-      <div class="grid grid-cols-2">
+      <div class="grid grid-cols-2 items-center">
         <h2 class="font-semibold text-xl text-gray-800 my-2">Accounts</h2>
         <div class="justify-end">
           <multiselect

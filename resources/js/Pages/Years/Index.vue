@@ -29,11 +29,11 @@
       <!-- <jet-button @click="create" class="mt-4 ml-8">Create</jet-button> -->
 
       <form @submit.prevent="form.get(route('years.create'))">
-        <div class="grid grid-cols-2">
-          <jet-button type="submit" @click="create" class="ml-2"
-            >Add Year</jet-button
-          >
-          <div class="justify-end overflow-hidden">
+        <!-- <div class="grid grid-cols-2"> -->
+        <jet-button type="submit" @click="create" class="ml-2"
+          >Add Year</jet-button
+        >
+        <!-- <div class="justify-end overflow-hidden">
             <multiselect
               style="width: 50%"
               class="float-right rounded-md border border-black"
@@ -46,7 +46,7 @@
             >
             </multiselect>
           </div>
-        </div>
+        </div> -->
         <!-- <button
           class="border bg-indigo-300 rounded-xl px-4  m-1 ml-2 mt-4"
           type="submit"
