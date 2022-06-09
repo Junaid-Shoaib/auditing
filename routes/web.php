@@ -48,7 +48,10 @@ Route::middleware([
 
 
 // To read the Excel File
-Route::get('/excel', Excel::class)->name('excel');
+Route::get('trial', function () {
+        return Inertia::render('TrialExcel/Index');
+    })->name('trial.index')->middleware('auth');
+Route::post('trial/read', Excel::class)->name('trial.read')->middleware('auth');
 
 //COMPANIES -------------------- STARTS ---------------------------
 Route::get('companies', [CompanyController::class, 'index'])

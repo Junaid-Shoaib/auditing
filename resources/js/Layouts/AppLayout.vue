@@ -95,6 +95,31 @@
                   />
                   {{ item.label }}
                 </a>
+                <button
+                  type="button"
+                  @click="logout"
+                  class="
+                    flex
+                    items-center
+                    px-6
+                    py-2.5
+                    text-gray-500
+                    hover:text-orange-600
+                    group
+                  "
+                >
+                  <component
+                    :is="item.icon"
+                    class="
+                      mr-2
+                      w-5
+                      h-5
+                      text-gray-400
+                      group-hover:text-orange-500
+                    "
+                  />
+                  Logout
+                </button>
               </div>
               <div class="mb-10">
                 <h3
@@ -224,6 +249,21 @@
           />
           {{ item.label }}
         </a>
+        <button
+          type="button"
+          @click="logout"
+          class="
+            flex
+            items-center
+            px-6
+            py-2.5
+            text-gray-500
+            hover:text-orange-600
+            group
+          "
+        >
+          Logout
+        </button>
       </div>
       <!-- <div class="mb-10">
         <h3 class="mx-6 mb-2 text-xs tracking-widest text-gray-400 uppercase">
@@ -496,7 +536,9 @@ export default {
           icon: HeartIcon,
         },
         { href: route("accounts"), label: "Accounts", icon: HeartIcon },
-        { href: route("excel"), label: "Read Excel", icon: ChatIcon },
+        // { href: route("excel"), label: "Read Excel", icon: ChatIcon },
+        { href: route("trial.index"), label: "Read Excel", icon: ChatIcon },
+        // { href: route("logout"), label: "Logout", icon: ChatIcon },
       ],
       libraryNavigation: [
         { href: "/", label: "Favorites", icon: HeartIcon },
@@ -513,6 +555,11 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    logout() {
+      this.$inertia.post(route("logout"));
+    },
   },
 };
 </script>

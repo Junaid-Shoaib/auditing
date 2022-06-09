@@ -990,6 +990,12 @@ select {
 .float-none {
   float: none;
 }
+.m-2 {
+  margin: 0.5rem;
+}
+.m-4 {
+  margin: 1rem;
+}
 .m-1 {
   margin: 0.25rem;
 }
@@ -1082,6 +1088,12 @@ select {
 }
 .mb-2 {
   margin-bottom: 0.5rem;
+}
+.-mr-6 {
+  margin-right: -1.5rem;
+}
+.-mb-8 {
+  margin-bottom: -2rem;
 }
 .mr-8 {
   margin-right: 2rem;
@@ -1593,6 +1605,9 @@ select {
 }
 .p-6 {
   padding: 1.5rem;
+}
+.p-8 {
+  padding: 2rem;
 }
 .p-1 {
   padding: 0.25rem;

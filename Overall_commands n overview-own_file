@@ -57,6 +57,45 @@ install Spout library which we use to read the MS Excel file
 follow the Blog/Article from bittenbook website to install the spout
 
 
+------------------------------------------------------------
+to get the previous selected company on login 
+we need to code in 
+app >> Providers >> JetstreamServiceProvider.php
+
+import the below libraries
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Laravel\Fortify\Fortify;
+use Illuminate\Support\Facades\Hash;
+
+and the below piece of code in boot() function
+//------------
+Fortify::authenticateUsing(function (Request $request) {
+            $user = User::where('email', $request->email)->first();
+
+            if (
+                $user &&
+                Hash::check($request->password, $user->password)
+            ) {
+
+                if ($user->settings()->where('key', 'active_company')->first()) {
+                    session(['company_id' => $user->settings()->where('key', 'active_company')->first()->value]);
+                    // session(['year_id'=>$user->settings()->where('key', 'active_year')->first()->value]);
+                }
+                if ($user->settings()->where('key', 'active_year')->first()) {
+                    // session(['company_id'=>$user->settings()->where('key', 'active_company')->first()->value]);
+                    session(['year_id' => $user->settings()->where('key', 'active_year')->first()->value]);
+                }
+                return $user;
+            }
+        });
+//----------------------
+
+------------------------------------------------------------
+
+
+
 
 
 

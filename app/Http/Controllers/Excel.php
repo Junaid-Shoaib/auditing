@@ -12,6 +12,7 @@ use App\Models\Account;
 use App\Models\Trial;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class Excel extends Controller
 {
@@ -23,10 +24,12 @@ class Excel extends Controller
      */
     public function __invoke(Request $request)
     {
+        // return Inertia::render('TrialExcel/Index');
 
         $reader = ReaderEntityFactory::createXLSXReader();
-        // $reader->open('data.xlsx');
-        $reader->open('trial.xlsx');
+        // $reader->open('trial.xlsx');
+        $reader->open($request->file('avatar'));
+
         foreach ($reader->getSheetIterator() as $sheet) {
             // only read data from 1st sheet
             if ($sheet->getIndex() === 0) { // index is 0-based
