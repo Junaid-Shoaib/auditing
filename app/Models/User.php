@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+//For Roles n Permissions
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -17,6 +19,8 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+//For Roles n Permissions
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -58,4 +62,14 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function companies()
+    {
+        return $this->belongsToMany('App\Models\Company', 'companies_users');
+    }
+
+    public function settings()
+    {
+        return $this->hasMany('App\Models\Setting', 'user_id');
+    }
 }

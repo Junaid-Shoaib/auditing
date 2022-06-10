@@ -20,14 +20,23 @@ class PermissionsDemoSeeder extends Seeder
         Permission::create(['name' => 'read']);
 
 
-        $role1 = Role::create(['name' => 'manager']);
-        $role1->givePermissionTo('create');
-        $role1->givePermissionTo('edit');
-        $role1->givePermissionTo('delete');
+        //Trainee
+
+        $role1 = Role::create(['name' => 'trainee']);
         $role1->givePermissionTo('read');
 
-        $role2 = Role::create(['name' => 'user']);
+        //Manager
+
+        $role2 = Role::create(['name' => 'manager']);
+        $role2->givePermissionTo('create');
+        $role2->givePermissionTo('edit');
+        $role2->givePermissionTo('delete');
         $role2->givePermissionTo('read');
+
+        //Partner
+
+        $role3 = Role::create(['name' => 'partner']);
+        $role3->givePermissionTo('read');
 
         // Permission::create(['name' => 'edit articles']);
         // Permission::create(['name' => 'delete articles']);

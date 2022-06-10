@@ -1,0 +1,105 @@
+git clone https://github.com/MuhammadHaris55/auditing.git
+
+composer install
+
+npm install
+
+-------------------------------
+
+npm install @heroicons/vue
+---- from https://github.com/tailwindlabs/heroicons#readme
+
+npm i @headlessui/vue
+---- from https://www.npmjs.com/package/@headlessui/vue
+
+npm install @suadelabs/vue3-multiselect
+----from https://github.com/SuadeLabs/vue3-multiselect
+-------------------------------
+
+
+copy the paginator file in resources/js/Pages/AppLayout
+
+
+- app/Http/Middleware/HandleInertiaRequest.php
+
+update the "share" function in this file
+--------------
+public function share(Request $request): array
+    {
+        return array_merge(parent::share($request), [
+            'co_id' => session('company_id'),
+            'yr_id' => session('year_id'),
+            'flash' => function () use ($request) {
+                return [
+                    'success' => $request->session()->get('success'),
+                    'warning' => $request->session()->get('warning'),
+                    'error' => $request->session()->get('error'),
+                ];
+            },
+        ]);
+    }
+---------------------------
+
+
+
+resources/lang/en/pagination.php
+replace this
+	'previous' => '&laquo; Previous',
+    'next' => 'Next &raquo;',
+with the code below to change the text on pagination bar
+	'previous' => 'Previous',
+    'next' => 'Next',
+
+
+------------------------------------------------
+install Spout library which we use to read the MS Excel file
+
+follow the Blog/Article from bittenbook website to install the spout
+
+
+------------------------------------------------------------
+to get the previous selected company on login 
+we need to code in 
+app >> Providers >> JetstreamServiceProvider.php
+
+import the below libraries
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Laravel\Fortify\Fortify;
+use Illuminate\Support\Facades\Hash;
+
+and the below piece of code in boot() function
+//------------
+Fortify::authenticateUsing(function (Request $request) {
+            $user = User::where('email', $request->email)->first();
+
+            if (
+                $user &&
+                Hash::check($request->password, $user->password)
+            ) {
+
+                if ($user->settings()->where('key', 'active_company')->first()) {
+                    session(['company_id' => $user->settings()->where('key', 'active_company')->first()->value]);
+                    // session(['year_id'=>$user->settings()->where('key', 'active_year')->first()->value]);
+                }
+                if ($user->settings()->where('key', 'active_year')->first()) {
+                    // session(['company_id'=>$user->settings()->where('key', 'active_company')->first()->value]);
+                    session(['year_id' => $user->settings()->where('key', 'active_year')->first()->value]);
+                }
+                return $user;
+            }
+        });
+//----------------------
+
+------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
