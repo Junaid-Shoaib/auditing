@@ -108,7 +108,7 @@
                     group
                   "
                 >
-                  <component
+                  <!-- <component
                     :is="item.icon"
                     class="
                       mr-2
@@ -117,7 +117,7 @@
                       text-gray-400
                       group-hover:text-orange-500
                     "
-                  />
+                  /> -->
                   Logout
                 </button>
               </div>
