@@ -25,6 +25,10 @@ class Excel extends Controller
     public function __invoke(Request $request)
     {
         // return Inertia::render('TrialExcel/Index');
+        $request->validate([
+            'avatar'=> 'required|mimes:xlsx, xls'
+        ]);
+
 
         $reader = ReaderEntityFactory::createXLSXReader();
         // $reader->open('trial.xlsx');
@@ -221,6 +225,6 @@ class Excel extends Controller
             $reader->close();
         }
 
-        return Redirect::route('companies');
+        return Redirect::route('accounts');
     }
 }

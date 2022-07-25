@@ -74,7 +74,7 @@ class AccountController extends Controller
                 //     }),
             ]);
         } else {
-            return Redirect::route('accountgroups')->with('warning', 'ACCOUNTGROUP NOT FOUND, Please create account group first.');
+            return Redirect::route('trial.index')->with('warning', 'Please upload Excel to generate Accounts and Account Groups.');
         }
     }
 

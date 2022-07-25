@@ -527,7 +527,7 @@ export default {
     return {
       sidebarOpened: false,
       mainNavigation: [
-        { href: route("dashboard"), label: "Dashboard", icon: HomeIcon },
+        // { href: route("dashboard"), label: "Dashboard", icon: HomeIcon },
         { href: route("companies"), label: "Companies", icon: HomeIcon },
         { href: route("years"), label: "Years", icon: HeartIcon },
         {
@@ -538,6 +538,21 @@ export default {
         { href: route("accounts"), label: "Accounts", icon: HeartIcon },
         // { href: route("excel"), label: "Read Excel", icon: ChatIcon },
         { href: route("trial.index"), label: "Read Excel", icon: ChatIcon },
+        {
+          href: route("filing", ["planing"]),
+          label: "Planing",
+          icon: ChatIcon,
+        },
+        {
+          href: route("filing", ["completion"]),
+          label: "Completion",
+          icon: ChatIcon,
+        },
+        {
+          href: route("filing", ["execution"]),
+          label: "Execution",
+          icon: ChatIcon,
+        },
         // { href: route("logout"), label: "Logout", icon: ChatIcon },
       ],
       libraryNavigation: [

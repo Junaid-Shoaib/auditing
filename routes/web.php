@@ -12,6 +12,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\YearController;
 use App\Http\Controllers\AccountGroupController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\FileMangementController;
 
 // To read Excel file
 use App\Http\Controllers\Excel;
@@ -183,4 +184,45 @@ Route::delete('accounts/{account}', [AccountController::class, 'destroy'])
 
 
 
+//File Management ------------------------- STARTS --------------------------------------
+
+Route::get('filing/createFolder', [FileMangementController::class, 'createFolder'])
+    ->name('filing.createFolder')
+    ->middleware('auth');
+
+Route::post('filing/folder', [FileMangementController::class, 'storeFolder'])
+    ->name('filing.store.folder')
+    ->middleware('auth');
+
+Route::get('filing/uploadFile/{folder_id}', [FileMangementController::class, 'uploadFile'])
+    ->name('filing.uploadFile')
+    ->middleware('auth');
+
+Route::post('filing/file/{parent_id}', [FileMangementController::class, 'storeFile'])
+    ->name('filing.store.file')
+    ->middleware('auth');
+
+Route::get('filing/downloadFile/{file_id}', [FileMangementController::class, 'downloadFile'])
+    ->name('filing.downloadFile')
+    ->middleware('auth');
+
+Route::controller(FileMangementController::class)->group(function () {
+    Route::get('/filing/{parent_name}', 'filing')->name('filing');
+    Route::get('filing/createFolder', 'createFolder')->name('filing.createFolder');
+    Route::post('filing', 'storeFolder')->name('filing.storeFolder');
+});
+
+
+
+//File Management ------------------------- END --------------------------------------
+
+
+Route::get('/routes', function() {
+    //Clear Route cache:
+    $exitCode = Artisan::call('route:clear');
+    //Route cache:
+    $exitCode2 = Artisan::call('route:cache');
+    return back()->with('success', 'Cache clear');
+    return '<h1>Route cache cleared</h1>';
+});
 
