@@ -16,22 +16,41 @@ use Illuminate\Support\Facades\File;
 
 class FileMangementController extends Controller
 {
-    public function filing($parent_name)
+    public function filing($parent_name_id)
     {
-        $parent = FileManager::all()->where('company_id', session('company_id'))
-            ->where('year_id', session('year_id'))
-            ->where('name', $parent_name)
-            ->map(function ($obj) {
-                return [
-                    'id' => $obj->id,
-                    'name' => ucfirst($obj->name),
-                    'is_folder' => $obj->is_folder,
-                    'parent_id' => $obj->parent_id,
-                    'type' => $obj->name == 'execution' ? 'Folder' : 'File',
-                ];
-            })
-            ->first();
+        //condition to deal with url parameter- it will be name if hiting the link from dashboard otherwise it will be id
+        if($parent_name_id == 'planing' || $parent_name_id == 'execution' || $parent_name_id == 'completion')
+        {
+            $parent = FileManager::all()->where('company_id', session('company_id'))
+                ->where('year_id', session('year_id'))
+                ->where('name', $parent_name_id)
+                ->map(function ($obj) {
+                    return [
+                        'id' => $obj->id,
+                        'name' => ucfirst($obj->name),
+                        'is_folder' => $obj->is_folder,
+                        'parent_id' => $obj->parent_id,
+                        'type' => $obj->name == 'execution' ? 'Folder' : 'File',
+                    ];
+                })
+                ->first();
+        } else {
+            $parent = FileManager::all()->where('company_id', session('company_id'))
+                ->where('year_id', session('year_id'))
+                ->where('id', $parent_name_id)
+                ->map(function ($obj) {
+                    return [
+                        'id' => $obj->id,
+                        'name' => ucfirst($obj->name),
+                        'is_folder' => $obj->is_folder,
+                        'parent_id' => $obj->parent_id,
+                        'type' => $obj->name == 'execution' ? 'Folder' : 'File',
+                    ];
+                })
+                ->first();
+        }
 
+        //if get parent then we can show their childrens otherwise we can't track folders or file
         if($parent)
         {
             //Validating request
@@ -106,8 +125,7 @@ class FileMangementController extends Controller
             'company_id' => session('company_id'),
         ]);
         Storage::makeDirectory('/public/' . $folderObj->company_id . '/' . $folderObj->year_id . '/' . $folderObj->parent_id . '/' . $folderObj->id);
-        // Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/' . $parent->id . '/' . $folderObj->id);
-
+        //sending parameter value "execution" because we can only create folder/directories in Executino folder that's why redirecting their
         return Redirect::route("filing", ["execution"])->with('success', 'Folder created.');
     }
 
@@ -144,8 +162,8 @@ class FileMangementController extends Controller
             'year_id' => session('year_id'),
             'company_id' => session('company_id'),
         ]);
-
-        return Redirect::route("filing", [$parent->name])->with('success', 'File upload.');
+        //sending parameter value "$parent->id" because we have to show the folder where we upload the file
+        return Redirect::route("filing", [$parent->id])->with('success', 'File upload.');
     }
 
     public function downloadFile($file_id)

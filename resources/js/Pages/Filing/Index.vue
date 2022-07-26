@@ -88,7 +88,7 @@
                       m-1
                       hover:text-white hover:bg-indigo-400
                     "
-                    @click="viewFolder(item.name)"
+                    @click="viewFolder(item.id)"
                     type="button"
                   >
                     <span>View</span>
@@ -188,8 +188,8 @@ export default {
       this.$inertia.get(route("filing.createFolder"));
     },
 
-    viewFolder(name) {
-      this.$inertia.get(route("filing", name));
+    viewFolder(id) {
+      this.$inertia.get(route("filing", id));
     },
 
     downloadFile: function (id) {

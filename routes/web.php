@@ -207,7 +207,7 @@ Route::get('filing/downloadFile/{file_id}', [FileMangementController::class, 'do
     ->middleware('auth');
 
 Route::controller(FileMangementController::class)->group(function () {
-    Route::get('/filing/{parent_name}', 'filing')->name('filing');
+    Route::get('/filing/{parent_name_id}', 'filing')->name('filing');
     Route::get('filing/createFolder', 'createFolder')->name('filing.createFolder');
     Route::post('filing', 'storeFolder')->name('filing.storeFolder');
 });
