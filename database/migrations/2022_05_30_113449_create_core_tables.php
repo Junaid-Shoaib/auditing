@@ -140,6 +140,20 @@ class CreateCoreTables extends Migration
         //     $table->timestamps();
         // });
 
+        Schema::create('file_managers', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->tinyInteger('enabled')->default('1');
+            $table->boolean('is_folder')->default(0)->nullable();
+            $table->unsignedBigInteger('company_id');
+            $table->unsignedBigInteger('year_id');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->foreign('company_id')->references('id')->on('companies');
+            $table->foreign('year_id')->references('id')->on('years');
+            $table->foreign('parent_id')->references('id')->on('file_managers');
+            $table->timestamps();
+        });
+
         Schema::create('companies_users', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
@@ -161,6 +175,7 @@ class CreateCoreTables extends Migration
         // Schema::dropIfExists('entries');
         // Schema::dropIfExists('documents');
         // Schema::dropIfExists('document_types');
+        Schema::dropIfExists('file_managers');
         Schema::dropIfExists('settings');
         Schema::dropIfExists('years');
         Schema::dropIfExists('accounts');

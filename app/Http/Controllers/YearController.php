@@ -13,11 +13,13 @@ use Inertia\Inertia;
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\AccountGroup;
 use App\Models\AccountType;
 use App\Models\Account;
 use App\Models\Entry;
+use App\Models\FileManager;
 
 class YearController extends Controller
 {
@@ -68,18 +70,27 @@ class YearController extends Controller
         $newBegin = implode('-', $begin);
         $newEnd = implode('-', $end);
 
-
-        // dd($newBegin);
-        Year::create([
+        $year = Year::create([
             'begin' => $newBegin,
             'end' => $newEnd,
             'company_id' => session('company_id'),
-
         ]);
+        session(['year_id' => $year->id]);
 
-        $year = Year::where('company_id', session('company_id'))->latest()->first();
-        // Storage::makedirectory('/public/' . $year->company->id . '/' . $year->id);
+        Storage::makeDirectory('/public/' . $year->company_id . '/' . $year->id);
 
+        $constFoldersName = ['planing', 'completion', 'execution'];
+        foreach($constFoldersName as $name)
+        {
+            $constObj = FileManager::create([
+                'name' => $name,
+                'is_folder' => 0,
+                'parent_id' => null,
+                'year_id' => $year->id,
+                'company_id' => $year->company_id,
+            ]);
+            Storage::makeDirectory('/public/' . $year->company_id . '/' . $year->id . '/' . $constObj->id);
+        }
 
         return Redirect::back()->with('success', 'Year created.');
     }

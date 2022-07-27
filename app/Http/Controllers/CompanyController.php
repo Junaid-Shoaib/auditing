@@ -20,6 +20,7 @@ use App\Models\AccountType;
 use App\Models\Document;
 use App\Models\Entry;
 use App\Models\DocumentType;
+use App\Models\FileManager;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -154,9 +155,44 @@ class CompanyController extends Controller
 
             Storage::makeDirectory('/public/' . $company->id);
             Storage::makeDirectory('/public/' . $company->id . '/' . $year->id);
-            Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/planing');
-            Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/execution');
-            Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/completion');
+
+            $constFoldersName = ['planing', 'completion', 'execution'];
+            foreach($constFoldersName as $name)
+            {
+                $constObj = FileManager::create([
+                    'name' => $name,
+                    'is_folder' => 0,
+                    'parent_id' => null,
+                    'year_id' => $year->id,
+                    'company_id' => $company->id,
+                ]);
+                Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/' . $constObj->id);
+            }
+
+            // $planing = FileManager::create([
+            //     'name' => 'planing',
+            //     'is_folder' => 0,
+            //     'parent_id' => null,
+            //     'year_id' => $year->id,
+            //     'company_id' => $company->id,
+            // ]);
+            // $execution = FileManager::create([
+            //     'name' => 'execution',
+            //     'is_folder' => 0,
+            //     'parent_id' => null,
+            //     'year_id' => $year->id,
+            //     'company_id' => $company->id,
+            // ]);
+            // $completion = FileManager::create([
+            //     'name' => 'completion',
+            //     'is_folder' => 0,
+            //     'parent_id' => null,
+            //     'year_id' => $year->id,
+            //     'company_id' => $company->id,
+            // ]);
+            // Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/' . $planing->id);
+            // Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/' . $execution->id);
+            // Storage::makeDirectory('/public/' . $company->id . '/' . $year->id . '/' . $completion->id);
         });
         return Redirect::route('companies')->with('success', 'Company created');
     }

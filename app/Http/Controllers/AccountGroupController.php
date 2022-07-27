@@ -17,51 +17,56 @@ class AccountGroupController extends Controller
 {
     public function index()
     {
-        //Validating request
-        request()->validate([
-            'direction' => ['in:asc,desc'],
-            'field' => ['in:name,email']
-        ]);
+        if(AccountGroup::where('company_id', session('company_id'))->first())
+        {
+            //Validating request
+            request()->validate([
+                'direction' => ['in:asc,desc'],
+                'field' => ['in:name,email']
+            ]);
 
-        //Searching request
-        $query = AccountGroup::query();
-        if (request('search')) {
-            $query->where('name', 'LIKE', '%' . request('search') . '%');
+            //Searching request
+            $query = AccountGroup::query();
+            if (request('search')) {
+                $query->where('name', 'LIKE', '%' . request('search') . '%');
+            }
+
+            // // Ordering request
+            // if (request()->has(['field', 'direction'])) {
+            //     $query->orderBy(
+            //         request('field'),
+            //         request('direction')
+            //     );
+            // }
+
+            $balances = $query
+                ->where('company_id', session('company_id'))
+                ->paginate(10)
+                ->through(
+                    function ($accountgroup) {
+                        return
+                            [
+                                'id' => $accountgroup->id,
+                                'name' => $accountgroup->name,
+                                'type_id' => $accountgroup->type_id,
+                                'type_name' => $accountgroup->accountType->name,
+                                'company_id' => $accountgroup->company_id,
+                                'company_name' => $accountgroup->company->name,
+                                'delete' => Account::where('group_id', $accountgroup->id)->first() ? false : true,
+                            ];
+                    }
+                );
+
+            return Inertia::render('AccountGroups/Index', [
+                'filters' => request()->all(['search', 'field', 'direction']),
+                'balances' => $balances,
+                'exists' => AccountGroup::where('company_id', session('company_id'))->first() ? false : true,
+                'company' => Company::where('id', session('company_id'))->first(),
+                'companies' => Auth::user()->companies,
+            ]);
+        } else {
+                return Redirect::route('trial.index')->with('warning', 'Please upload Excel to generate Accounts and Account Groups.');
         }
-
-        // // Ordering request
-        // if (request()->has(['field', 'direction'])) {
-        //     $query->orderBy(
-        //         request('field'),
-        //         request('direction')
-        //     );
-        // }
-
-        $balances = $query
-            ->where('company_id', session('company_id'))
-            ->paginate(10)
-            ->through(
-                function ($accountgroup) {
-                    return
-                        [
-                            'id' => $accountgroup->id,
-                            'name' => $accountgroup->name,
-                            'type_id' => $accountgroup->type_id,
-                            'type_name' => $accountgroup->accountType->name,
-                            'company_id' => $accountgroup->company_id,
-                            'company_name' => $accountgroup->company->name,
-                            'delete' => Account::where('group_id', $accountgroup->id)->first() ? false : true,
-                        ];
-                }
-            );
-
-        return Inertia::render('AccountGroups/Index', [
-            'filters' => request()->all(['search', 'field', 'direction']),
-            'balances' => $balances,
-            'exists' => AccountGroup::where('company_id', session('company_id'))->first() ? false : true,
-            'company' => Company::where('id', session('company_id'))->first(),
-            'companies' => Auth::user()->companies,
-        ]);
     }
 
     // public function generate()
