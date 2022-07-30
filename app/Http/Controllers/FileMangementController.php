@@ -96,7 +96,7 @@ class FileMangementController extends Controller
                 'parent' => $parent,
             ]);
         } else {
-            return Redirect::route('trial.index')->with('warning', 'Please upload Excel to generate Accounts and Account Groups.');
+            return Redirect::route('companies')->with('warning', 'Please create company first to excess these folders.');
         }
     }
 
@@ -123,7 +123,10 @@ class FileMangementController extends Controller
             'parent_id' => $parent->id,
             'year_id' => session('year_id'),
             'company_id' => session('company_id'),
+            'path' => session('company_id') . '/' . session('year_id') . '/' . $parent->id,
         ]);
+        $folderObj->path = $folderObj->path . '/' . $folderObj->id;
+        $folderObj->save();
         Storage::makeDirectory('/public/' . $folderObj->company_id . '/' . $folderObj->year_id . '/' . $folderObj->parent_id . '/' . $folderObj->id);
         //sending parameter value "execution" because we can only create folder/directories in Executino folder that's why redirecting their
         return Redirect::route("filing", ["execution"])->with('success', 'Folder created.');
@@ -159,6 +162,7 @@ class FileMangementController extends Controller
             'name' => $name,
             'is_folder' => 1,
             'parent_id' => $parent_id,
+            'path' => $pathWithFileName,
             'year_id' => session('year_id'),
             'company_id' => session('company_id'),
         ]);
@@ -169,27 +173,90 @@ class FileMangementController extends Controller
     public function downloadFile($file_id)
     {
         $file_obj = FileManager::find($file_id);
-        $file_parent_obj = FileManager::find($file_obj->parent_id);
-        $file_grand_parent_obj = FileManager::find($file_parent_obj->parent_id);
-        if($file_grand_parent_obj)
-        {
-            $path = public_path() . '/storage/' . session('company_id') . '/' . session('year_id') . '/' . $file_grand_parent_obj->id . '/' . $file_parent_obj->id . '/' . $file_obj->name;
-
-        } else {
-            $path = public_path() . '/storage/' . session('company_id') . '/' . session('year_id') . '/' . $file_parent_obj->id . '/' . $file_obj->name;
-        }
-        // return response()->download($path);
-        // if (File::isFile($path))
-        // {
-        //     $file = File::get($path);
-        //     $response = Response::make($file, 200);
-        //     $response->header('Content-Type', 'application/pdf');
-        //     return Response::download($file, $file_obj->name);
-        //     return $response;
-        // }
-        // $filePath = public_path($path);
-        return Response::download($path);
-        // return Response::download($filePath);
+        return response()->download(storage_path('app/public/' . $file_obj->path));
     }
 
+    public function deleteFileFolder(FileManager $file_folder_id)
+    {
+        try {
+            if($file_folder_id->is_folder == 0)
+            {
+                $type = 'Folder';
+                $files = FileManager::where('parent_id', $file_folder_id->id)->get();
+                if(count($files) > 0)
+                {
+                    foreach($files as $file)
+                    {
+                        Storage::delete('public/' . $file->path);
+                        $file->delete();
+                    }
+                }
+                Storage::deleteDirectory('public/' . $file_folder_id->path);
+            } else {
+                $type = 'File';
+                Storage::delete('public/' . $file_folder_id->path);
+            }
+            $file_folder_id->delete();
+            return back()->with('success', $type . ' deleted');
+        } catch(Throwable $e) {
+            return back()->with('error', $e);
+        }
+        return back()->with('error', 'Something went wrong, check network connection and try again');
+    }
+
+
+
+
+    // ------------- TO CREEATE DEFAULT FOLDER ON COMPANY and YEAR GENERATION -------
+        public function defaultFolders()
+    {
+        $constFoldersName = [
+            'planing', 'completion', 'execution',
+            //ASSETS
+            'Fixed Assets', 'Investment Properties', 'Investments',
+            'Long Term Loans And Advances', 'Long Term Deposits And Prepayments', 'Stores, Spares And Stock-In-Trade',
+            'Trade Debts', 'Advances, Deposits, Prepayments & Other Receivable', 'Cash & Bank Balances',
+            //LIABILITIES
+            'Accrued Expenses', 'Contingencies & Commitments', 'Deferred Liabilities',
+            'Direct Taxation', 'Dividend Payable', 'Equity',
+            'Liabilities Against Assets', 'Long Term Debt', 'Long Term Deposit',
+            'Payables', 'Short Term Borrowings', 'Surplus on Revaluation',
+            //PROFIT AND LOSS
+            'Sales', 'Cost Of Sales', 'Admin Expense',
+            'Financial Charges', 'Other Income',
+        ];
+
+        $parent_id = null;
+        foreach($constFoldersName as $name)
+        {
+            $folderObj = FileManager::create([
+                'name' => $name,
+                'is_folder' => 0,
+                'parent_id' => $parent_id,
+                'year_id' => session('year_id'),
+                'company_id' => session('company_id'),
+                'path' => session('company_id') . '/' . session('year_id'),
+            ]);
+
+            // for those objects which are without parent folders ------- planing, completion and execution
+            if($parent_id == null)
+            {
+                $folderObj->path = $folderObj->path . '/' . $folderObj->id;
+                $folderObj->save();
+                Storage::makeDirectory('/public/' . $folderObj->company_id . '/' . $folderObj->year_id . '/' . $folderObj->id);
+            } else {
+                // object with parent(excution)
+                $folderObj->path = $folderObj->path . '/' . $folderObj->parent_id . '/' . $folderObj->id;
+                $folderObj->save();
+                Storage::makeDirectory('/public/' . $folderObj->company_id . '/' . $folderObj->year_id . '/' . $folderObj->parent_id . '/' . $folderObj->id);
+            }
+
+            // storing execution object id in parent id
+            if($name == 'execution')
+            {
+                $parent_id = $folderObj->id;
+            }
+        }
+        return true;
+    }
 }

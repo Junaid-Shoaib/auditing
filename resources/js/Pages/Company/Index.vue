@@ -3,12 +3,9 @@
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 my-2">Company</h2>
     </template>
-    <div
-      v-if="$page.props.flash.success"
-      class="bg-green-600 text-white text-center"
-    >
-      {{ $page.props.flash.success }}
-    </div>
+
+    <FlashMessage />
+
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-2">
       <jet-button @click="create" class="ml-2">Create</jet-button>
 
@@ -259,6 +256,7 @@
 import AppLayout from "@/Layouts/AppLayout";
 import JetButton from "@/Jetstream/Button";
 import Paginator from "@/Layouts/Paginator";
+import FlashMessage from "@/Layouts/FlashMessage";
 import { pickBy } from "lodash";
 import { throttle } from "lodash";
 // import Multiselect from "@suadelabs/vue3-multiselect";
@@ -270,6 +268,7 @@ export default {
     Paginator,
     throttle,
     pickBy,
+    FlashMessage,
     // Multiselect,
   },
 

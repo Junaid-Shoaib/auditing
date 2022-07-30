@@ -143,6 +143,7 @@ class CreateCoreTables extends Migration
         Schema::create('file_managers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('path');
             $table->tinyInteger('enabled')->default('1');
             $table->boolean('is_folder')->default(0)->nullable();
             $table->unsignedBigInteger('company_id');
