@@ -19,12 +19,8 @@
       </div>
     </template>
 
-    <div
-      v-if="$page.props.flash.success"
-      class="bg-green-600 text-white text-center"
-    >
-      {{ $page.props.flash.success }}
-    </div>
+    <FlashMessage />
+
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-2">
       <!-- <jet-button @click="create" class="mt-4 ml-8">Create</jet-button> -->
 
@@ -159,6 +155,7 @@ import JetButton from "@/Jetstream/Button";
 import { useForm } from "@inertiajs/inertia-vue3";
 import Multiselect from "@suadelabs/vue3-multiselect";
 import Paginator from "@/Layouts/Paginator";
+import FlashMessage from "@/Layouts/FlashMessage";
 // import { Head, Link } from "@inertiajs/inertia-vue3";
 
 export default {
@@ -168,6 +165,7 @@ export default {
     useForm,
     Multiselect,
     Paginator,
+    FlashMessage,
     // Link,
     // Head,
   },

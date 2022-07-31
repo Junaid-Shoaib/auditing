@@ -18,18 +18,9 @@
         </div>
       </div>
     </template>
-    <div
-      v-if="$page.props.flash.success"
-      class="bg-green-600 text-white text-center"
-    >
-      {{ $page.props.flash.success }}
-    </div>
-    <div
-      v-if="$page.props.flash.warning"
-      class="bg-yellow-600 text-white text-center"
-    >
-      {{ $page.props.flash.warning }}
-    </div>
+
+    <FlashMessage />
+
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-2">
       <!-- <jet-button @click="create" class="ml-2">Create</jet-button>
       <jet-button @click="generate" v-if="exists" class="ml-2"
@@ -163,6 +154,7 @@
 import AppLayout from "@/Layouts/AppLayout";
 import JetButton from "@/Jetstream/Button";
 import Paginator from "@/Layouts/Paginator";
+import FlashMessage from "@/Layouts/FlashMessage";
 import { pickBy } from "lodash";
 import { throttle } from "lodash";
 import Multiselect from "@suadelabs/vue3-multiselect";
@@ -175,6 +167,7 @@ export default {
     throttle,
     pickBy,
     Multiselect,
+    FlashMessage,
   },
 
   props: {

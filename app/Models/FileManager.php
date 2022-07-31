@@ -10,7 +10,7 @@ class FileManager extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'is_folder', 'company_id', 'year_id', 'parent_id', 'enabled'
+        'name', 'is_folder', 'company_id', 'year_id', 'parent_id', 'enabled', 'path'
     ];
 
     public function company(){

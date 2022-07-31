@@ -21,12 +21,8 @@
       </div>
     </template>
 
-    <div
-      v-if="$page.props.flash.success"
-      class="bg-green-600 text-white text-center"
-    >
-      {{ $page.props.flash.success }}
-    </div>
+    <FlashMessage />
+
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-2">
       <!-- <jet-button @click="create" class="mt-4 ml-8">Create</jet-button> -->
 
@@ -76,6 +72,21 @@
                   >
                     <span>Download</span>
                   </button>
+                  <button
+                    class="
+                      border
+                      bg-red-500
+                      rounded-xl
+                      px-4
+                      m-1
+                      hover:text-white hover:bg-red-600
+                    "
+                    @click="deleteFileFolder(item.id)"
+                    type="button"
+                  >
+                    <!-- v-if="item.delete" -->
+                    <span>Delete</span>
+                  </button>
                 </td>
 
                 <td v-else class="w-4/12px-4 border w-2/6 text-center">
@@ -93,36 +104,21 @@
                   >
                     <span>View</span>
                   </button>
-                  <!-- <button
-                      class="
-                        border
-                        bg-red-500
-                        rounded-xl
-                        px-4
-                        m-1
-                        hover:text-white hover:bg-red-600
-                      "
-                      @click="destroy(item.id)"
-                      type="button"
-                      v-if="item.delete"
-                    >
-                      <span>Delete</span>
-                    </button>
-                    <button
-                      v-if="item.closed == 0"
-                      class="
-                        border
-                        bg-gray-300
-                        rounded-xl
-                        px-4
-                        m-1
-                        hover:bg-gray-700 hover:text-white
-                      "
-                      @click="close(item.id)"
-                      type="button"
-                    >
-                      <span>Close Fiscal</span>
-                    </button> -->
+                  <button
+                    class="
+                      border
+                      bg-red-500
+                      rounded-xl
+                      px-4
+                      m-1
+                      hover:text-white hover:bg-red-600
+                    "
+                    @click="deleteFileFolder(item.id)"
+                    type="button"
+                  >
+                    <!-- v-if="item.delete" -->
+                    <span>Delete</span>
+                  </button>
                 </td>
               </tr>
               <tr v-if="balances.data.length === 0">
@@ -146,6 +142,7 @@ import JetButton from "@/Jetstream/Button";
 import { useForm } from "@inertiajs/inertia-vue3";
 import Multiselect from "@suadelabs/vue3-multiselect";
 import Paginator from "@/Layouts/Paginator";
+import FlashMessage from "@/Layouts/FlashMessage";
 // import { Head, Link } from "@inertiajs/inertia-vue3";
 
 export default {
@@ -155,6 +152,7 @@ export default {
     useForm,
     Multiselect,
     Paginator,
+    FlashMessage,
     // Link,
     // Head,
   },
@@ -194,6 +192,10 @@ export default {
 
     downloadFile: function (id) {
       this.$inertia.get(route("filing.downloadFile", id));
+    },
+
+    deleteFileFolder: function (id) {
+      this.$inertia.get(route("filing.deleteFileFolder", id));
     },
 
     // edit(id) {

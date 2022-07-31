@@ -21,43 +21,48 @@ use App\Models\Account;
 use App\Models\Entry;
 use App\Models\FileManager;
 
-class YearController extends Controller
+class YearController extends FileMangementController
 {
     public function index()
     {
-        $query = Year::query();
-        return Inertia::render('Years/Index', [
-            // 'data' => Year::all()
-            'balances' => $query
-                ->where('company_id', session('company_id'))
-                // ->map(
-                ->paginate(10)
-                ->through(
-                    function ($year) {
-                        return [
-                            $begin = new Carbon($year->begin),
-                            $end = new Carbon($year->end),
-                            'id' => $year->id,
-                            'closed' => $year->closed,
-                            'begin' => $begin->format('F,j Y'),
-                            'end' => $end->format('F,j Y'),
-                            'company_name' => $year->company->name,
-                            'company_id' => $year->company_id,
-                            // 'delete' => Document::where('year_id', $year->id)->first() || $year->id == Year::where('company_id', session('company_id'))->first()->id ? false : true,
-                        ];
-                    },
-                ),
-            'company' => Company::where('id', session('company_id'))->first(),
-            // 'companies' => Company::all()
-            //     ->map(function ($com) {
-            //         return [
-            //             'id' => $com->id,
-            //             'name' => $com->name,
-            //         ];
-            //     }),
-            'companies' => Auth::user()->companies,
+        if(Company::first())
+        {
+            $query = Year::query();
+            return Inertia::render('Years/Index', [
+                // 'data' => Year::all()
+                'balances' => $query
+                    ->where('company_id', session('company_id'))
+                    // ->map(
+                    ->paginate(10)
+                    ->through(
+                        function ($year) {
+                            return [
+                                $begin = new Carbon($year->begin),
+                                $end = new Carbon($year->end),
+                                'id' => $year->id,
+                                'closed' => $year->closed,
+                                'begin' => $begin->format('F,j Y'),
+                                'end' => $end->format('F,j Y'),
+                                'company_name' => $year->company->name,
+                                'company_id' => $year->company_id,
+                                // 'delete' => Document::where('year_id', $year->id)->first() || $year->id == Year::where('company_id', session('company_id'))->first()->id ? false : true,
+                            ];
+                        },
+                    ),
+                'company' => Company::where('id', session('company_id'))->first(),
+                // 'companies' => Company::all()
+                //     ->map(function ($com) {
+                //         return [
+                //             'id' => $com->id,
+                //             'name' => $com->name,
+                //         ];
+                //     }),
+                'companies' => Auth::user()->companies,
 
-        ]);
+            ]);
+        } else {
+            return Redirect::route('companies')->with('warning', 'Create Company first');
+        }
     }
 
     public function create()
@@ -79,19 +84,8 @@ class YearController extends Controller
 
         Storage::makeDirectory('/public/' . $year->company_id . '/' . $year->id);
 
-        $constFoldersName = ['planing', 'completion', 'execution'];
-        foreach($constFoldersName as $name)
-        {
-            $constObj = FileManager::create([
-                'name' => $name,
-                'is_folder' => 0,
-                'parent_id' => null,
-                'year_id' => $year->id,
-                'company_id' => $year->company_id,
-            ]);
-            Storage::makeDirectory('/public/' . $year->company_id . '/' . $year->id . '/' . $constObj->id);
-        }
-
+        // Calling the function from DefaultFoldersCreation controller ---- to generate the default folder
+        $this->defaultFolders();
         return Redirect::back()->with('success', 'Year created.');
     }
 

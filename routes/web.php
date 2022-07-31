@@ -13,6 +13,7 @@ use App\Http\Controllers\YearController;
 use App\Http\Controllers\AccountGroupController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\FileMangementController;
+use App\Http\Controllers\DefaultFoldersCreation;
 
 // To read Excel file
 use App\Http\Controllers\Excel;
@@ -204,6 +205,10 @@ Route::post('filing/file/{parent_id}', [FileMangementController::class, 'storeFi
 
 Route::get('filing/downloadFile/{file_id}', [FileMangementController::class, 'downloadFile'])
     ->name('filing.downloadFile')
+    ->middleware('auth');
+
+Route::get('filing/deleteFileFolder/{file_folder_id}', [FileMangementController::class, 'deleteFileFolder'])
+    ->name('filing.deleteFileFolder')
     ->middleware('auth');
 
 Route::controller(FileMangementController::class)->group(function () {
