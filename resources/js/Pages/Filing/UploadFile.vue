@@ -2,7 +2,7 @@
   <app-layout>
     <template #header>
       <div class="grid grid-cols-2 items-center">
-        <h2 class="font-semibold text-xl text-gray-800 my-2">
+        <h2 class="font-semibold text-xl text-white my-2">
           Upload File in {{ parent.name }}
         </h2>
       </div>
@@ -23,10 +23,26 @@
       <!-- <jet-button @click="create" class="ml-2">Create Account</jet-button> -->
 
       <div class="">
-        <div class="relative overflow-x-auto mt-2 ml-2 sm:rounded-2xl">
+        <div class="relative  mt-2 ml-2 sm:rounded-2xl">
+             <div
+              class="
+                ml-2
+                bg-red-100
+                border border-red-400
+                text-red-700
+                px-4
+                py-2
+                rounded
+                relative
+              "
+              role="alert"
+              v-if="errors.avatar"
+            >
+              {{ errors.avatar }}
+            </div>
           <form @submit.prevent="submit">
             <div class="p-8 -mr-6 -mb-8 flex flex-wrap">
-              <input type="file" v-on:change="onFileChange" />
+              <input class="border-solid border-2 border-indigo-300 rounded-xl px-6 py-2 m-4" type="file" v-on:change="onFileChange" />
               <!-- <progress
                 v-if="form2.progress"
                 :value="form2.progress.percentage"
@@ -72,6 +88,7 @@ export default {
   },
 
   props: {
+    errors:Object,
     data: Object,
     fold: Object,
     parent: Object,

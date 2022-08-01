@@ -2,7 +2,7 @@
   <app-layout>
     <template #header>
       <div class="grid grid-cols-2 items-center">
-        <h2 class="font-semibold text-xl text-gray-800 my-2">
+        <h2 class="font-semibold text-xl text-white my-2">
           {{ parent.name }} - {{ parent.type }}
         </h2>
         <div class="justify-end">

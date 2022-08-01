@@ -53,44 +53,47 @@ Route::middleware([
 Route::get('trial', function () {
         return Inertia::render('TrialExcel/Index');
     })->name('trial.index')->middleware('auth');
+
+
 Route::post('trial/read', Excel::class)->name('trial.read')->middleware('auth');
 
 //COMPANIES -------------------- STARTS ---------------------------
 Route::get('companies', [CompanyController::class, 'index'])
-    ->name('companies')
-    ->middleware('auth');
+->name('companies')
+->middleware('auth');
 
 Route::get('companies/create', [CompanyController::class, 'create'])
-    ->name('companies.create')
-    ->middleware('auth');
+->name('companies.create')
+->middleware('auth');
 
 Route::post('companies', [CompanyController::class, 'store'])
-    ->name('companies.store')
-    ->middleware('auth');
+->name('companies.store')
+->middleware('auth');
 
 Route::get('companies/{company}/edit', [CompanyController::class, 'edit'])
-    ->name('companies.edit')
-    ->middleware('auth');
+->name('companies.edit')
+->middleware('auth');
 
 Route::put('companies/{company}', [CompanyController::class, 'update'])
-    ->name('companies.update')
-    ->middleware('auth');
+->name('companies.update')
+->middleware('auth');
 
 Route::delete('companies/{company}', [CompanyController::class, 'destroy'])
-    ->name('companies.destroy')
-    ->middleware('auth');
+->name('companies.destroy')
+->middleware('auth');
 
 //TO CHANGE COMPANY THE FROM DROPDOWN
 Route::get('companies/coch/{id}', [CompanyController::class, 'coch'])
-    ->name('companies.coch');
+->name('companies.coch');
 
+Route::get('trialpattern', [CompanyController::class, 'trial_pattern'])->name('trial.pattern')->middleware('auth');
 //COMPANIES -------------------- END ---------------------------
 
 
 //YEARS ------------------------------------ STARTS ------------------
 Route::get('years', [YearController::class, 'index'])
-    ->name('years')
-    ->middleware('auth');
+->name('years')
+->middleware('auth');
 
 Route::get('years/create', [YearController::class, 'create'])
     ->name('years.create')

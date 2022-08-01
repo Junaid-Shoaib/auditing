@@ -26,13 +26,13 @@ class Excel extends Controller
     {
         // return Inertia::render('TrialExcel/Index');
         $request->validate([
-            'avatar'=> 'required|mimes:xlsx, xls'
+            'file'=> 'required|mimes:xlsx, xls'
         ]);
 
 
         $reader = ReaderEntityFactory::createXLSXReader();
         // $reader->open('trial.xlsx');
-        $reader->open($request->file('avatar'));
+        $reader->open($request->file('file'));
 
         foreach ($reader->getSheetIterator() as $sheet) {
             // only read data from 1st sheet
@@ -227,4 +227,6 @@ class Excel extends Controller
 
         return Redirect::route('accounts');
     }
+
+
 }

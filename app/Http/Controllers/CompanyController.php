@@ -288,4 +288,9 @@ class CompanyController extends FileMangementController
     }
     // FOR PDF FROM MZAUDIT --------
 
+
+    public function trial_pattern(){
+        return response()->download(public_path('/trial.xlsx'));
+    }
+
 }

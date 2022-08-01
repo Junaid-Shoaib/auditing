@@ -23,7 +23,7 @@
               flex-col
               w-72
               h-full
-              bg-gray-50
+              bg-gray-800
               border-r border-gray-200
               md:hidden
             "
@@ -62,7 +62,7 @@
                     mb-2
                     text-xs
                     tracking-widest
-                    text-gray-400
+                    text-white
                     uppercase
                   "
                 >
@@ -78,8 +78,8 @@
                     items-center
                     px-6
                     py-2.5
-                    text-gray-500
-                    hover:text-orange-600
+                    text-white
+                    hover:text-indigo-400
                     group
                   "
                 >
@@ -89,8 +89,8 @@
                       mr-2
                       w-5
                       h-5
-                      text-gray-400
-                      group-hover:text-orange-500
+                      text-white
+                      group-hover:text-indigo-300
                     "
                   />
                   {{ item.label }}
@@ -103,8 +103,8 @@
                     items-center
                     px-6
                     py-2.5
-                    text-gray-500
-                    hover:text-orange-600
+                    text-white
+                    hover:text-indigo-400
                     group
                   "
                 >
@@ -114,8 +114,8 @@
                       mr-2
                       w-5
                       h-5
-                      text-gray-400
-                      group-hover:text-orange-500
+                      text-white
+                      group-hover:text-indigo-300
                     "
                   /> -->
                   Logout
@@ -128,7 +128,7 @@
                     mb-2
                     text-xs
                     tracking-widest
-                    text-gray-400
+                    text-white
                     uppercase
                   "
                 >
@@ -144,8 +144,8 @@
                     items-center
                     px-6
                     py-2.5
-                    text-gray-500
-                    hover:text-orange-600
+                    text-white
+                    hover:text-indigo-400
                     group
                   "
                 >
@@ -155,8 +155,8 @@
                       mr-2
                       w-5
                       h-5
-                      text-gray-400
-                      group-hover:text-orange-500
+                      text-white
+                      group-hover:text-indigo-300
                     "
                   />
                   {{ item.label }}
@@ -169,7 +169,7 @@
                     mb-2
                     text-xs
                     tracking-widest
-                    text-gray-400
+                    text-white
                     uppercase
                   "
                 >
@@ -185,8 +185,8 @@
                     items-center
                     px-6
                     py-2.5
-                    text-gray-500
-                    hover:text-orange-600
+                    text-white
+                    hover:text-indigo-400
                     group
                   "
                 >
@@ -217,7 +217,7 @@
       </Dialog>
     </TransitionRoot>
 
-    <div class="hidden w-64 bg-gray-50 border-r border-gray-200 md:block">
+    <div class="hidden w-64 bg-gray-800 border-r border-white-200 md:block">
       <div class="py-4 px-6">
         <a href="/">
           <ApplicationLogo class="w-48 h-9" />
@@ -225,7 +225,7 @@
       </div>
 
       <div class="mb-10">
-        <!-- <h3 class="mx-6 mb-2 text-xs tracking-widest text-gray-400 uppercase">
+        <!-- <h3 class="mx-6 mb-2 text-xs tracking-widest text-white uppercase">
           Main
         </h3> -->
 
@@ -238,14 +238,15 @@
             items-center
             px-6
             py-2.5
-            text-gray-500
-            hover:text-orange-600
+            text-white
+            hover:text-indigo-400
+            hover:bg-gray-700
             group
           "
         >
           <component
             :is="item.icon"
-            class="mr-2 w-5 h-5 text-gray-400 group-hover:text-orange-500"
+            class="mr-2 w-5 h-5 text-white group-hover:text-indigo-300"
           />
           {{ item.label }}
         </a>
@@ -257,8 +258,9 @@
             items-center
             px-6
             py-2.5
-            text-gray-500
-            hover:text-orange-600
+            text-white
+            hover:text-indigo-400
+            hover:bg-gray-700
             group
           "
         >
@@ -266,7 +268,7 @@
         </button>
       </div>
       <!-- <div class="mb-10">
-        <h3 class="mx-6 mb-2 text-xs tracking-widest text-gray-400 uppercase">
+        <h3 class="mx-6 mb-2 text-xs tracking-widest text-white uppercase">
           Library
         </h3>
 
@@ -279,20 +281,20 @@
             items-center
             px-6
             py-2.5
-            text-gray-500
-            hover:text-orange-600
+            text-white
+            hover:text-indigo-400
             group
           "
         >
           <component
             :is="item.icon"
-            class="mr-2 w-5 h-5 text-gray-400 group-hover:text-orange-500"
+            class="mr-2 w-5 h-5 text-white group-hover:text-indigo-300"
           />
           {{ item.label }}
         </a>
       </div>
       <div class="mb-10">
-        <h3 class="mx-6 mb-2 text-xs tracking-widest text-gray-400 uppercase">
+        <h3 class="mx-6 mb-2 text-xs tracking-widest text-white uppercase">
           Following
         </h3>
 
@@ -305,8 +307,8 @@
             items-center
             px-6
             py-2.5
-            text-gray-500
-            hover:text-orange-600
+            text-white
+            hover:text-indigo-400
             group
           "
         >
@@ -316,7 +318,7 @@
       </div> -->
     </div>
 
-    <div class="flex-1">
+    <div class="h-screen bg-gray-200 flex-1">
       <div
         class="
           flex
@@ -326,7 +328,7 @@
           md:px-6
           space-x-3
           md:space-x-6
-          bg-gray-50
+          bg-gray-800
           border-b
         "
       >
@@ -357,7 +359,7 @@
                 flex
                 relative
                 items-center
-                text-gray-400
+                text-white
                 focus-within:text-gray-600
               "
             >
@@ -527,6 +529,8 @@ export default {
     return {
       sidebarOpened: false,
       mainNavigation: [
+
+
         // { href: route("dashboard"), label: "Dashboard", icon: HomeIcon },
         { href: route("companies"), label: "Companies", icon: HomeIcon },
         { href: route("years"), label: "Years", icon: HeartIcon },
