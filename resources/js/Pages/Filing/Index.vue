@@ -8,7 +8,7 @@
         <div class="justify-end">
           <multiselect
             style="width: 50%; z-index: 10"
-            class="float-right rounded-md border border-black"
+            class="float-right rounded-lg border border-white"
             placeholder="Select Company."
             v-model="co_id"
             track-by="id"
@@ -37,7 +37,7 @@
       >
 
       <div class="">
-        <div class="relative overflow-x-auto mt-2 ml-2 sm:rounded-2xl">
+        <div class="obsolute overflow-x-auto mt-2 ml-2 sm:rounded-2xl">
           <table class="w-full shadow-lg border rounded-2xl">
             <thead>
               <tr class="bg-gray-800 text-white">

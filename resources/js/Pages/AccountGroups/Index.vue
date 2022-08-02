@@ -87,7 +87,7 @@
         </svg>
       </button>
       <div>
-        <div class="relative overflow-x-auto mt-2 ml-2 sm:rounded-2xl">
+        <div class="obsolute overflow-x-auto mt-2 ml-2 sm:rounded-2xl">
           <table class="w-full shadow-lg border rounded-2xl">
             <thead>
               <tr class="bg-gray-800 text-white">

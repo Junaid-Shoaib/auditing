@@ -122,8 +122,8 @@
             </tbody>
           </table>
         </div>
-        <paginator class="mt-6" :balances="balances" />
       </div>
+        <paginator class="mt-6" :balances="balances" />
     </div>
   </app-layout>
 </template>

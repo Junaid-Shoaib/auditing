@@ -15,7 +15,7 @@
 
       <div class="">
           <!-- overflow-x-auto -->
-        <div class="relative  mt-2 ml-2 sm:rounded-2xl">
+        <div class="obsolute  mt-2 ml-2 sm:rounded-2xl">
           <div
               class="
                 ml-2
@@ -25,7 +25,7 @@
                 px-4
                 py-2
                 rounded
-                relative
+                obsolute
               "
               role="alert"
               v-if="errors.file"
@@ -49,8 +49,8 @@
               >
                 Upload Trial Balance
               </button>
- <a class="border bg-indigo-300 rounded-xl px-4 py-4 m-4"
-              href="/trialpattern">Download Trail Template</a>
+                <a class="border bg-indigo-300 rounded-xl px-4 py-4 m-4"
+                href="/trialpattern">Download Trail Template</a>
 
               <!-- <button
                 class="border bg-indigo-300 rounded-xl px-4 py-2 m-4"
