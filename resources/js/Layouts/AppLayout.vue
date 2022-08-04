@@ -57,14 +57,7 @@
             <div class="overflow-y-auto flex-1">
               <div class="mb-10">
                 <h3
-                  class="
-                    mx-6
-                    mb-2
-                    text-xs
-                    tracking-widest
-                    text-white
-                    uppercase
-                  "
+                  class="mx-6 mb-2 text-xs tracking-widest text-white uppercase"
                 >
                   Main
                 </h3>
@@ -85,13 +78,7 @@
                 >
                   <component
                     :is="item.icon"
-                    class="
-                      mr-2
-                      w-5
-                      h-5
-                      text-white
-                      group-hover:text-indigo-300
-                    "
+                    class="mr-2 w-5 h-5 text-white group-hover:text-indigo-300"
                   />
                   {{ item.label }}
                 </a>
@@ -123,14 +110,7 @@
               </div>
               <div class="mb-10">
                 <h3
-                  class="
-                    mx-6
-                    mb-2
-                    text-xs
-                    tracking-widest
-                    text-white
-                    uppercase
-                  "
+                  class="mx-6 mb-2 text-xs tracking-widest text-white uppercase"
                 >
                   Library
                 </h3>
@@ -151,27 +131,14 @@
                 >
                   <component
                     :is="item.icon"
-                    class="
-                      mr-2
-                      w-5
-                      h-5
-                      text-white
-                      group-hover:text-indigo-300
-                    "
+                    class="mr-2 w-5 h-5 text-white group-hover:text-indigo-300"
                   />
                   {{ item.label }}
                 </a>
               </div>
               <div class="mb-10">
                 <h3
-                  class="
-                    mx-6
-                    mb-2
-                    text-xs
-                    tracking-widest
-                    text-white
-                    uppercase
-                  "
+                  class="mx-6 mb-2 text-xs tracking-widest text-white uppercase"
                 >
                   Following
                 </h3>
@@ -229,18 +196,32 @@
           Main
         </h3> -->
 
-        <a
+        <jet-nav-link
+          v-for="(item, index) in mainNavigation"
+          :key="index"
+          :href="item.href"
+          :active="route().current(item.routeName)"
+        >
+          <component
+            :is="item.icon"
+            class="mr-2 w-5 h-5 text-white group-hover:text-indigo-300"
+          />
+          {{ item.label }}
+        </jet-nav-link>
+        <!-- <a
           v-for="(item, index) in mainNavigation"
           :href="item.href"
           :key="index"
+          :active="route().current(item.routeName)"
           class="
             flex
             items-center
             px-6
             py-2.5
             text-white
-            hover:text-indigo-400
-            hover:bg-gray-700
+            focus:outline-none focus:bg-gray-50
+            active:bg-red-50
+            hover:text-indigo-400 hover:bg-gray-700
             group
           "
         >
@@ -249,7 +230,7 @@
             class="mr-2 w-5 h-5 text-white group-hover:text-indigo-300"
           />
           {{ item.label }}
-        </a>
+        </a> -->
         <button
           type="button"
           @click="logout"
@@ -259,8 +240,7 @@
             px-6
             py-2.5
             text-white
-            hover:text-indigo-400
-            hover:bg-gray-700
+            hover:text-indigo-400 hover:bg-gray-700
             group
           "
         >
@@ -483,6 +463,7 @@
   </div>
 </template>
 
+
 <script>
 import {
   Dialog,
@@ -499,13 +480,22 @@ import {
   ChatIcon,
   ClipboardListIcon,
   ClockIcon,
+  CloudUploadIcon,
+  CollectionIcon,
+  DocumentAddIcon,
   HeartIcon,
   HomeIcon,
+  LogoutIcon,
   MenuIcon,
+  ReceiptRefundIcon,
+  ReceiptTaxIcon,
   SearchIcon,
+  TableIcon,
+  UserGroupIcon,
   XIcon,
 } from "@heroicons/vue/outline";
 import ApplicationLogo from "@/Jetstream/ApplicationLogo";
+import JetNavLink from "@/Jetstream/NavLink";
 
 export default {
   components: {
@@ -517,6 +507,7 @@ export default {
     XIcon,
     ChatIcon,
     HeartIcon,
+    JetNavLink,
     HomeIcon,
     Menu,
     MenuButton,
@@ -529,35 +520,62 @@ export default {
     return {
       sidebarOpened: false,
       mainNavigation: [
-
-
         // { href: route("dashboard"), label: "Dashboard", icon: HomeIcon },
-        { href: route("companies"), label: "Companies", icon: HomeIcon },
-        { href: route("years"), label: "Years", icon: HeartIcon },
+        {
+          href: route("companies"),
+          routeName: "companies",
+          label: "Companies",
+          icon: HomeIcon,
+        },
+        {
+          href: route("years"),
+          routeName: "years",
+          label: "Years",
+          icon: CalendarIcon,
+        },
         {
           href: route("accountgroups"),
+          routeName: "accountgroups",
           label: "Account Groups",
-          icon: HeartIcon,
+          icon: UserGroupIcon,
         },
-        { href: route("accounts"), label: "Accounts", icon: HeartIcon },
+        {
+          href: route("accounts"),
+          routeName: "accounts",
+          label: "Accounts",
+          icon: ReceiptRefundIcon,
+        },
         // { href: route("excel"), label: "Read Excel", icon: ChatIcon },
-        { href: route("trial.index"), label: "Read Excel", icon: ChatIcon },
+        {
+          href: route("trial.index"),
+          routeName: "trial.index",
+          label: "Read Excel",
+          icon: CloudUploadIcon,
+        },
         {
           href: route("filing", ["planing"]),
+          routeName: "filing.planing",
           label: "Planing",
-          icon: ChatIcon,
+          icon: DocumentAddIcon,
         },
         {
           href: route("filing", ["completion"]),
+          routeName: "filing.completion",
           label: "Completion",
-          icon: ChatIcon,
+          icon: DocumentAddIcon,
         },
         {
-          href: route("filing", ["execution"]),
+          href: route("filing.folder"),
+          routeName: "filing.folder",
           label: "Execution",
-          icon: ChatIcon,
+          icon: CollectionIcon,
         },
-        // { href: route("logout"), label: "Logout", icon: ChatIcon },
+        // {
+        //   href: route("logout"),
+        //   routeName: "logout",
+        //   label: "Logout",
+        //   icon: LogoutIcon,
+        // },
       ],
       libraryNavigation: [
         { href: "/", label: "Favorites", icon: HeartIcon },

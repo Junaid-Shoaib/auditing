@@ -149,6 +149,7 @@
   </app-layout>
 </template>
 
+<style src="@suadelabs/vue3-multiselect/dist/vue3-multiselect.css"></style>
 <script>
 import AppLayout from "@/Layouts/AppLayout";
 import JetButton from "@/Jetstream/Button";
