@@ -135,13 +135,13 @@ Route::get('accountgroups', [AccountGroupController::class, 'index'])
     ->name('accountgroups')
     ->middleware('auth');
 
-Route::get('accountgroups/create', [AccountGroupController::class, 'create'])
-    ->name('accountgroups.create')
-    ->middleware('auth');
+// Route::get('accountgroups/create', [AccountGroupController::class, 'create'])
+//     ->name('accountgroups.create')
+//     ->middleware('auth');
 
-Route::post('accountgroups/create', [AccountGroupController::class, 'create'])
-    ->name('accountgroups.create')
-    ->middleware('auth');
+// Route::post('accountgroups/create', [AccountGroupController::class, 'create'])
+//     ->name('accountgroups.create')
+//     ->middleware('auth');
 
 Route::post('accountgroups', [AccountGroupController::class, 'store'])
     ->name('accountgroups.store')
@@ -215,8 +215,14 @@ Route::get('filing/deleteFileFolder/{file_folder_id}', [FileMangementController:
     ->name('filing.deleteFileFolder')
     ->middleware('auth');
 
+Route::get('/filing/folder/{folder_id?}', [FileMangementController::class, 'folder'])
+    ->name('filing.folder')
+    ->middleware('auth');
+
+
 Route::controller(FileMangementController::class)->group(function () {
     Route::get('/filing/{parent_name_id}', 'filing')->name('filing');
+    // Route::get('/filing/execution/{parent_name_id?}', 'folder')->name('folder');
     Route::get('filing/createFolder', 'createFolder')->name('filing.createFolder');
     Route::post('filing', 'storeFolder')->name('filing.storeFolder');
 });

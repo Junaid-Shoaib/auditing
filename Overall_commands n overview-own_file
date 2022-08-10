@@ -15,6 +15,7 @@ npm i @headlessui/vue
 npm install @suadelabs/vue3-multiselect
 ----from https://github.com/SuadeLabs/vue3-multiselect
 -------------------------------
+don't forget to attach it's css file through script tag
 
 
 copy the paginator file in resources/js/Pages/AppLayout

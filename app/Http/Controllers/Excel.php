@@ -39,15 +39,28 @@ class Excel extends Controller
             if ($sheet->getIndex() === 0) { // index is 0-based
                 foreach ($sheet->getRowIterator() as $rowIndex => $row) {
                     if($rowIndex === 1) continue; // skip headers row
+                    $total_col = count($row->getCells());
+                    for($i=0 ; $i <= $total_col-6 ; $i++){
+                         $cols[$i]= $row->getCellAtIndex($i)->getValue();
+                        //   $col.$i
+                    }
 
-                    $col1 = $row->getCellAtIndex(0)->getValue();
-                    $col2 = $row->getCellAtIndex(1)->getValue();
-                    $col3 = $row->getCellAtIndex(2)->getValue();
-                    $col4 = $row->getCellAtIndex(3)->getValue();
-                    $col5 = $row->getCellAtIndex(4)->getValue();
-
-                    if($col1 || $col2 || $col3 || $col4 || $col5)
+                    // $col1 = $row->getCellAtIndex(0)->getValue();
+                    // $col2 = $row->getCellAtIndex(1)->getValue();
+                    // $col3 = $row->getCellAtIndex(2)->getValue();
+                    // $col4 = $row->getCellAtIndex(3)->getValue();
+                    // $col5 = $row->getCellAtIndex(4)->getValue();
+                    $check_cols = false;
+                    foreach($cols as $col){
+                        if($col)
+                        {
+                            $check_cols = true;
+                            break;
+                        }
+                    }
+                    if($check_cols)
                     {
+                        // dd($cols);
 
                         //Account Type
                         $acc_type_name = $row->getCellAtIndex(0)->getValue();
@@ -56,7 +69,7 @@ class Excel extends Controller
                             $acc_type = AccountType::where('name', $acc_type_name)->first();
                         }
 
-
+                        //fgn_grp_id Its Mean Parent ID
                         $fgn_grp_id;
                         //Account Group
                         $acc_grp_name = $row->getCellAtIndex(1)->getValue();
@@ -77,56 +90,80 @@ class Excel extends Controller
                                 $acc_grp = $acc_grp_exist;
                             }
                             $fgn_grp_id = $acc_grp->id;
+                            $parent[1] = $fgn_grp_id;
                         }
+                        for($j= 2 ; $j <= $total_col-8 ; $j++){
 
-
-                        //Account Sub Group
-                        $acc_sub_grp_name = $row->getCellAtIndex(2)->getValue();
-                        if($acc_sub_grp_name)
-                        {
-                            $acc_sub_grp_exist = AccountGroup::where('name', $acc_sub_grp_name)->
-                                where('parent_id', $acc_grp->id)->
-                                // where('company_id', session('company_id'))->
-                                first();
-                            if(!$acc_sub_grp_exist)
+                            $acc_sub_grp_name = $row->getCellAtIndex($j)->getValue();
+                            if($acc_sub_grp_name)
                             {
-                                $acc_sub_grp = AccountGroup::create([
-                                    'type_id' => $acc_type->id,
-                                    'parent_id' => $acc_grp->id,
-                                    'name' => $acc_sub_grp_name,
-                                    'company_id' => session('company_id'),
-                                ]);
-                            } else {
-                                $acc_sub_grp = $acc_sub_grp_exist;
+                                $acc_sub_grp_exist = AccountGroup::where('name', $acc_sub_grp_name)->
+                                    where('parent_id', $acc_grp->id)->
+                                    where('company_id', session('company_id'))->
+                                    first();
+                                if(!$acc_sub_grp_exist)
+                                {
+                                    $acc_sub_grp = AccountGroup::create([
+                                        'type_id' => $acc_type->id,
+                                        // 'parent_id' => $acc_grp->id,
+                                        'parent_id' => $parent[$j-1],
+                                        'name' => $acc_sub_grp_name,
+                                        'company_id' => session('company_id'),
+                                    ]);
+                                } else {
+                                    $acc_sub_grp = $acc_sub_grp_exist;
+                                }
+                                $fgn_grp_id = $acc_sub_grp->id;
+                                $parent[$j] = $fgn_grp_id;
                             }
-                            $fgn_grp_id = $acc_sub_grp->id;
                         }
+                        // Account Sub Group
+                        // $acc_sub_grp_name = $row->getCellAtIndex(2)->getValue();
+                        // if($acc_sub_grp_name)
+                        // {
+                        //     $acc_sub_grp_exist = AccountGroup::where('name', $acc_sub_grp_name)->
+                        //         where('parent_id', $acc_grp->id)->
+                        //         // where('company_id', session('company_id'))->
+                        //         first();
+                        //     if(!$acc_sub_grp_exist)
+                        //     {
+                        //         $acc_sub_grp = AccountGroup::create([
+                        //             'type_id' => $acc_type->id,
+                        //             'parent_id' => $acc_grp->id,
+                        //             'name' => $acc_sub_grp_name,
+                        //             'company_id' => session('company_id'),
+                        //         ]);
+                        //     } else {
+                        //         $acc_sub_grp = $acc_sub_grp_exist;
+                        //     }
+                        //     $fgn_grp_id = $acc_sub_grp->id;
+                        // }
 
                         //Account Sub-sub Group
-                        $acc_sub_sub_grp_name = $row->getCellAtIndex(3)->getValue();
-                        if($acc_sub_sub_grp_name)
-                        {
-                            $acc_sub_sub_grp_exist = AccountGroup::where('name', $acc_sub_sub_grp_name)->
-                                where('parent_id', $acc_grp->id)->
-                                // where('company_id', session('company_id'))->
-                                first();
-                            if(!$acc_sub_sub_grp_exist)
-                            {
-                                $acc_sub_sub_grp = AccountGroup::create([
-                                    'type_id' => $acc_type->id,
-                                    'parent_id' => $acc_sub_grp->id,
-                                    'name' => $acc_sub_sub_grp_name,
-                                    'company_id' => session('company_id'),
-                                ]);
-                            } else {
-                                $acc_sub_sub_grp = $acc_sub_sub_grp_exist;
-                            }
-                            $fgn_grp_id = $acc_sub_sub_grp->id;
-                        }
+                        // $acc_sub_sub_grp_name = $row->getCellAtIndex(3)->getValue();
+                        // if($acc_sub_sub_grp_name)
+                        // {
+                        //     $acc_sub_sub_grp_exist = AccountGroup::where('name', $acc_sub_sub_grp_name)->
+                        //         where('parent_id', $acc_grp->id)->
+                        //         // where('company_id', session('company_id'))->
+                        //         first();
+                        //     if(!$acc_sub_sub_grp_exist)
+                        //     {
+                        //         $acc_sub_sub_grp = AccountGroup::create([
+                        //             'type_id' => $acc_type->id,
+                        //             'parent_id' => $acc_sub_grp->id,
+                        //             'name' => $acc_sub_sub_grp_name,
+                        //             'company_id' => session('company_id'),
+                        //         ]);
+                        //     } else {
+                        //         $acc_sub_sub_grp = $acc_sub_sub_grp_exist;
+                        //     }
+                        //     $fgn_grp_id = $acc_sub_sub_grp->id;
+                        // }
 
 
                         //Accounts
-                        $acc_name = $row->getCellAtIndex(4)->getValue();
+                        $acc_name = $row->getCellAtIndex($total_col-7)->getValue();
                         if($acc_name)
                         {
                             $acc_exist = Account::where('name', $acc_name)->
@@ -148,14 +185,14 @@ class Excel extends Controller
                             }
 
                             //For Trial table ----------------------------------------- START ---------------------------------
-                            $opn_debit = $row->getCellAtIndex(5)->getValue() ? $row->getCellAtIndex(5)->getValue() : 0;
-                            $opn_credit = $row->getCellAtIndex(6)->getValue() ? $row->getCellAtIndex(6)->getValue() : 0;
+                            $opn_debit = $row->getCellAtIndex($total_col-6)->getValue() ? $row->getCellAtIndex($total_col-6)->getValue() : 0;
+                            $opn_credit = $row->getCellAtIndex($total_col-5)->getValue() ? $row->getCellAtIndex($total_col-5)->getValue() : 0;
 
-                            $remain_debit = $row->getCellAtIndex(7)->getValue() ? $row->getCellAtIndex(7)->getValue() :  0;
-                            $remain_credit = $row->getCellAtIndex(8)->getValue() ? $row->getCellAtIndex(8)->getValue() : 0;
+                            $remain_debit = $row->getCellAtIndex($total_col-4)->getValue() ? $row->getCellAtIndex($total_col-4)->getValue() :  0;
+                            $remain_credit = $row->getCellAtIndex($total_col-3)->getValue() ? $row->getCellAtIndex($total_col-3)->getValue() : 0;
 
-                            $cls_debit = $row->getCellAtIndex(9)->getValue() ? $row->getCellAtIndex(9)->getValue() : 0;
-                            $cls_credit = $row->getCellAtIndex(10)->getValue() ? $row->getCellAtIndex(10)->getValue() : 0;
+                            $cls_debit = $row->getCellAtIndex($total_col-2)->getValue() ? $row->getCellAtIndex($total_col-2)->getValue() : 0;
+                            $cls_credit = $row->getCellAtIndex($total_col-1)->getValue() ? $row->getCellAtIndex($total_col-1)->getValue() : 0;
 
                             $trial_exists = Trial::where('company_id', session('company_id'))
                                 ->where('account_id', $acc->id)->first();
@@ -191,7 +228,7 @@ class Excel extends Controller
                             }
                             //For Trial table ----------------------------------------- START ---------------------------------
                         }
-                        //  else {
+                        //  else {acc_name
                         //     break;
                         // }
                     }
@@ -202,7 +239,29 @@ class Excel extends Controller
 
 
                     // $col1 = $row->getCellAtIndex(0); // id
-                    // $col2 = $row->getCellAtIndex(1)->getValue(); // joining date - using getValue() method of Cell object to get actual date value
+                    // $col2 = $row->ge   // public function acc_grp_recursive($acc_grp_name , $var)
+    // {
+    //                      $fgn_grp_id;
+    //                     if($acc_grp_name)
+    //                     {
+    //                         $acc_grp_exist = AccountGroup::where('name', $acc_grp_name)->
+    //                             where('company_id', session('company_id'))->
+    //                             first();
+    //                         if(!$acc_grp_exist)
+    //                         {
+    //                             $acc_grp = AccountGroup::create([
+    //                                 'type_id' => $acc_type->id,
+    //                                 'parent_id' => null,
+    //                                 'name' => $acc_grp_name,
+    //                                 'company_id' => session('company_id'),
+    //                             ]);
+    //                         } else {
+    //                             $acc_grp = $acc_grp_exist;
+    //                         }
+    //                         $fgn_grp_id = $acc_grp->id;
+    //                     }
+    //                     return $fgn_grp_id;
+    // }tCellAtIndex(1)->getValue(); // joining date - using getValue() method of Cell object to get actual date value
                     // $col3 = $row->getCellAtIndex(2); // name
                     // $col4 = $row->getCellAtIndex(3); // department
                     // $col5 = $row->getCellAtIndex(4); // designation
@@ -227,6 +286,31 @@ class Excel extends Controller
 
         return Redirect::route('accounts');
     }
+
+
+    // public function acc_grp_recursive($acc_grp_name , $var)
+    // {
+    //                      $fgn_grp_id;
+    //                     if($acc_grp_name)
+    //                     {
+    //                         $acc_grp_exist = AccountGroup::where('name', $acc_grp_name)->
+    //                             where('company_id', session('company_id'))->
+    //                             first();
+    //                         if(!$acc_grp_exist)
+    //                         {
+    //                             $acc_grp = AccountGroup::create([
+    //                                 'type_id' => $acc_type->id,
+    //                                 'parent_id' => null,
+    //                                 'name' => $acc_grp_name,
+    //                                 'company_id' => session('company_id'),
+    //                             ]);
+    //                         } else {
+    //                             $acc_grp = $acc_grp_exist;
+    //                         }
+    //                         $fgn_grp_id = $acc_grp->id;
+    //                     }
+    //                     return $fgn_grp_id;
+    // }
 
 
 }
