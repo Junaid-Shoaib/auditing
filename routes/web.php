@@ -88,6 +88,11 @@ Route::get('companies/coch/{id}', [CompanyController::class, 'coch'])
 ->name('companies.coch');
 
 Route::get('trialpattern', [CompanyController::class, 'trial_pattern'])->name('trial.pattern')->middleware('auth');
+
+Route::get('lead-schedule', [CompanyController::class, 'lead_schedule'])
+    ->name('lead_schedule')
+    ->middleware('auth');
+
 //COMPANIES -------------------- END ---------------------------
 
 

@@ -245,52 +245,65 @@ class CompanyController extends FileMangementController
 
 
     // FOR PDF FROM MZAUDIT --------
-    public function pd()
-    {
-        // $a = "hello world";
-        // dd(AccountType::where('company_id', session('company_id'))->first());
-        $voucher = Entry::all()
-            ->where('id', 2)
-            // ->where('company_id', session('company_id'))
-            //     ->where('year_id', session('year_id'))
+    // public function pd()
+    // {
+    //     // $a = "hello world";
+    //     // dd(AccountType::where('company_id', session('company_id'))->first());
+    //     $voucher = Entry::all()
+    //         ->where('id', 2)
+    //         // ->where('company_id', session('company_id'))
+    //         //     ->where('year_id', session('year_id'))
 
-            ->map(function ($comp) {
-                return [
-                    'id' => $comp->id,
-                    'debit' => $comp->debit,
-                    'credit' => $comp->credit,
-                    'description' => 'description',
-                    'ref' => 'ref',
-                    'name' => 'name',
-                    // 'ref' => $comp->document->ref,
-                    // 'description' => $comp->document->description,
-                    // 'name' => $comp->document->documentType->name,
-                ];
-            })
-            ->first();
+    //         ->map(function ($comp) {
+    //             return [
+    //                 'id' => $comp->id,
+    //                 'debit' => $comp->debit,
+    //                 'credit' => $comp->credit,
+    //                 'description' => 'description',
+    //                 'ref' => 'ref',
+    //                 'name' => 'name',
+    //                 // 'ref' => $comp->document->ref,
+    //                 // 'description' => $comp->document->description,
+    //                 // 'name' => $comp->document->documentType->name,
+    //             ];
+    //         })
+    //         ->first();
 
-        $data['entry_obj'] = Entry::all()->where('company_id', session('company_id'))->where('year_id', session('year_id'));
+    //     $data['entry_obj'] = Entry::all()->where('company_id', session('company_id'))->where('year_id', session('year_id'));
 
-        $i = 0;
-        foreach ($data['entry_obj'] as $entry) {
-            if ($entry) {
-                $data['entries'][$i] = $entry;
-                $i++;
-            }
-        }
-        $data['doc'] = Document::all()->where('id', $data['entries'][0]->document_id)->first();
-        $data['doc_type'] = DocumentType::all()->where('id', $data['doc']->type_id)->first();
-        $a = Company::where('id', session('company_id'))->first();
-        $pdf = App::make('dompdf.wrapper');
-        // $pdf->loadView('pdf', compact('a'));
-        $pdf->loadView('pdf', $data);
-        return $pdf->stream('v.pdf');
-    }
+    //     $i = 0;
+    //     foreach ($data['entry_obj'] as $entry) {
+    //         if ($entry) {
+    //             $data['entries'][$i] = $entry;
+    //             $i++;
+    //         }
+    //     }
+    //     $data['doc'] = Document::all()->where('id', $data['entries'][0]->document_id)->first();
+    //     $data['doc_type'] = DocumentType::all()->where('id', $data['doc']->type_id)->first();
+    //     $a = Company::where('id', session('company_id'))->first();
+    //     $pdf = App::make('dompdf.wrapper');
+    //     // $pdf->loadView('pdf', compact('a'));
+    //     $pdf->loadView('pdf', $data);
+    //     return $pdf->stream('v.pdf');
+    // }
     // FOR PDF FROM MZAUDIT --------
 
 
     public function trial_pattern(){
         return response()->download(public_path('/trial.xlsx'));
+    }
+
+
+    public function lead_schedule(){
+                // $a = Company::where('id', session('company_id'))->first();
+                $data = [
+                    'title' => 'Welcome to ItSolutionStuff.com',
+                    'date' => date('m/d/Y')
+                ];
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadView('lead_schedule', compact('data'));
+        // $pdf->loadView('lead-schdule', $data);
+        return $pdf->stream('v.pdf');
     }
 
 }
