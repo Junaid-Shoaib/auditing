@@ -13,7 +13,7 @@
     $amt = new NumberFormatter('en_GB', NumberFormatter::SPELLOUT);
     ?>
 <div style="position: relative">
-    <table style="width: 50%; float: left;">
+    <table style="width: 50%; margin-top:10px; float: left;">
         <tr>
             <td style="width:15%; font-size:16px;">
                 Client.
@@ -72,13 +72,14 @@
         </tr>
     </table>
     <div style="width: 50%; text-align: center; float:right; ">
-    <p style="font-family: Times New Roman; font-size:50px; color:#0C4866">B K R</p>
+    {{-- <p style="font-family: Times New Roman; font-size:50px; color:#0C4866">B K R</p> --}}
+    <img src="{{public_path('images/log.png')}}" style="width:170px; height:168px">
     {{-- <p style="font-family: Arial; font-size:15px; font-weight:bold; color:#0C4866">I N T E R N A T I O N A L</p> --}}
 
     </div>
 </div>
 
-<div class="information" style="margin-top: 140px">
+<div class="information" style="margin-top: 150px">
     <br />
     <table width="100%" style="border-collapse: collapse; border: 1px solid black;">
         <thead Style="background-color: #a8b3b8;">
