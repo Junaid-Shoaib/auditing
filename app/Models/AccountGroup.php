@@ -4,21 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-// use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class AccountGroup extends Model
 {
     use HasFactory;
-    // use HasRecursiveRelationships;
+    use HasRecursiveRelationships;
 
     protected $fillable = [
         'name', 'type_id', 'enabled', 'company_id', 'parent_id'
     ];
 
-    // public function accountGroup()
-    // {
-    //     return $this->belongsTo('App\Models\AccountGroup','parent_id');
-    // }
+    public function accountGroup()
+    {
+        return $this->belongsTo('App\Models\AccountGroup','parent_id');
+    }
 
     public function accountType()
     {

@@ -295,13 +295,18 @@ class CompanyController extends FileMangementController
 
 
     public function lead_schedule(){
+
+        $acc_grps =  AccountGroup::where('company_id', session('company_id'))
+        // ->where('year_id',session('year_id'))
+        // ->where('type_id',1)
+        ->tree()->get()->toTree()->toArray();
+        // dd($acc_grps);
+
+// dd($acc_grps);
                 // $a = Company::where('id', session('company_id'))->first();
-                $data = [
-                    'title' => 'Welcome to ItSolutionStuff.com',
-                    'date' => date('m/d/Y')
-                ];
+
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadView('lead_schedule', compact('data'));
+        $pdf->loadView('lead_schedule',compact('acc_grps'));
         // $pdf->loadView('lead-schdule', $data);
         return $pdf->stream('v.pdf');
     }

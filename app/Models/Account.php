@@ -25,4 +25,9 @@ class Account extends Model
     {
         return $this->hasMany('App\Models\Entry', 'account_id');
     }
+    public function trials()
+    {
+        return $this->hasOne('App\Models\Trial', 'account_id');
+    }
+
 }

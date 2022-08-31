@@ -52,6 +52,9 @@
                 <a class="border bg-indigo-300 rounded-xl px-4 py-4 m-4"
                 href="/trialpattern">Download Trail Template</a>
 
+                 <a class="border bg-indigo-300 rounded-xl px-4 py-4 m-4"
+                href="/lead">Lead Schedule</a>
+
               <!-- <button
                 class="border bg-indigo-300 rounded-xl px-4 py-2 m-4"
                 type="button"
