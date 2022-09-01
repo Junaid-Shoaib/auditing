@@ -44,7 +44,7 @@ class Excel extends Controller
                 foreach ($sheet->getRowIterator() as $rowIndex => $row) {
                     if($rowIndex === 1) continue; // skip headers row
                     $total_col = count($row->getCells());
-                    for($i=0 ; $i <= $total_col-6 ; $i++){
+                    for($i=0 ; $i <= $total_col-7 ; $i++){
                          $cols[$i]= $row->getCellAtIndex($i)->getValue();
                         //   $col.$i
                     }
@@ -64,11 +64,8 @@ class Excel extends Controller
                     }
                     if($check_cols)
                     {
-                        // dd($cols);
-
                         //Account Type
                         $acc_type_name = $row->getCellAtIndex(0)->getValue();
-                        // dd($acc_type_name);
                         if($acc_type_name){
                             $acc_type = AccountType::where('name', $acc_type_name)->first();
                         }
@@ -96,7 +93,7 @@ class Excel extends Controller
                             $fgn_grp_id = $acc_grp->id;
                             $parent[1] = $fgn_grp_id;
                         }
-                        for($j= 2 ; $j <= $total_col-8 ; $j++){
+                        for($j= 2 ; $j <= $total_col-9; $j++){
 
                             $acc_sub_grp_name = $row->getCellAtIndex($j)->getValue();
                             if($acc_sub_grp_name)
@@ -124,8 +121,9 @@ class Excel extends Controller
 
 
                         //Accounts
-                        $acc_name = $row->getCellAtIndex($total_col-7)->getValue();
-                        if($acc_name)
+                        $acc_name = $row->getCellAtIndex($total_col-8)->getValue();
+                        $acc_num = $row->getCellAtIndex($total_col-7)->getValue();
+                        if($acc_name && $acc_num)
                         {
                             $acc_exist = Account::where('name', $acc_name)->
                                 where('group_id', $fgn_grp_id)->
@@ -135,6 +133,7 @@ class Excel extends Controller
                             {
                                 $acc = Account::create([
                                     'name' => $acc_name,
+                                    'number' => $acc_num,
                                     'group_id' => $fgn_grp_id,
                                     'company_id' => session('company_id'),
                                 ]);
@@ -222,6 +221,14 @@ class Excel extends Controller
 
 }
 
+    public $opn=0;
+    public $cls=0;
+    public $dif=0;
+
+    public $opn_credt = 0;
+    public $cls_credt = 0;
+    public $opn_debt = 0;
+    public $cls_debt = 0;
 
 
 public function excel1($acc_grp, $key, $spreadsheet){
@@ -279,24 +286,40 @@ public function excel1($acc_grp, $key, $spreadsheet){
             $spreadsheet->getSheet($key)->getStyle('A12:G12')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
             $j = 13;
             $open = $clos = $diff = 0;
-            foreach($acc_grp['children'] as $k => $children){
-            $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
+            foreach($acc_grp['children'] as $k => $children)
+            {
+                $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
                 $spreadsheet->getSheet($key)->fromArray([$k+1], NULL, 'A'.$j);
                 $spreadsheet->getSheet($key)->fromArray([$children['name']], NULL, 'B'.$j);
                 $spreadsheet->getSheet($key)->fromArray([$children['path']], NULL, 'C'.$j);
                 $this->opn=0;
                 $this->cls=0;
                 $this->dif=0;
+
+                $this->opn_credt = 0;
+                $this->cls_credt = 0;
+                $this->opn_debt = 0;
+                $this->cls_debt = 0;
+
                 $this->acc_sum($children);
-                $spreadsheet->getSheet($key)->fromArray([$this->cls], NULL, 'D'.$j);
-                $spreadsheet->getSheet($key)->fromArray([$this->opn], NULL, 'E'.$j);
-                $spreadsheet->getSheet($key)->fromArray([$this->cls - $this->opn], NULL, 'F'.$j);
+                // dd($this->cls ,$this->opn , $j);
+                $closing = abs($this->cls_credt - $this->cls_debt);
+                $opening = abs($this->opn_credt - $this->opn_debt);
+                $spreadsheet->getSheet($key)->fromArray([$closing], NULL, 'D'.$j);
+                $spreadsheet->getSheet($key)->fromArray([$opening], NULL, 'E'.$j);
+                $spreadsheet->getSheet($key)->fromArray([$closing - $opening], NULL, 'F'.$j);
+                // $spreadsheet->getSheet($key)->fromArray([$this->cls], NULL, 'D'.$j);
+                // $spreadsheet->getSheet($key)->fromArray([$this->opn], NULL, 'E'.$j);
+                // $spreadsheet->getSheet($key)->fromArray([$this->cls - $this->opn], NULL, 'F'.$j);
                 $div = $this->opn == 0 ? 1 : $this->opn;
                 $res = ($this->cls/$div)*100;
                 $spreadsheet->getSheet($key)->fromArray([round($res, 2) . '%'], NULL, 'G'.$j);
-                $open += $this->opn;
-                $clos += $this->cls;
-                $diff += $this->dif;
+                // $open += $this->opn;
+                // $clos += $this->cls;
+                // $diff += $this->dif;
+                $open += $opening;
+                $clos += $closing;
+                $diff += $closing - $opening;
 
 
             // $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_DOUBLE);
@@ -305,8 +328,45 @@ public function excel1($acc_grp, $key, $spreadsheet){
                 $j++;
             }
             $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
+            // dd($clos , $this->opn);
 
             // $j++;
+
+            // $spreadsheet->getSheet($key)->fromArray(['TOTAL'], NULL, 'B'.$j);
+            // $spreadsheet->getSheet($key)->fromArray([$clos], NULL, 'D'.$j);
+            // $spreadsheet->getSheet($key)->fromArray([$open], NULL, 'E'.$j);
+            // $spreadsheet->getSheet($key)->fromArray([$clos - $open], NULL, 'F'.$j);
+            // $divi = $open == 0 ? 1 : $open;
+            // $resu = ($clos/$divi)*100;
+            // $spreadsheet->getSheet($key)->fromArray([round($resu, 2) . '%'], NULL, 'G'.$j);
+
+            $acc_cls = $acc_opn = 0;
+            foreach($acc_grp['accounts'] as $k => $acc)
+            {
+                $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
+                    $spreadsheet->getSheet($key)->fromArray([$k+1], NULL, 'A'.$j);
+                    $spreadsheet->getSheet($key)->fromArray([$acc['name']], NULL, 'B'.$j);
+                    $spreadsheet->getSheet($key)->fromArray([$acc['number']], NULL, 'C'.$j);
+                    // $this->sum=0;
+                    // $this->acc_sum($children);
+                    $acc_closing = abs($acc['trials']['cls_credit'] - $acc['trials']['cls_debit']);
+                    $acc_opening = abs($acc['trials']['opn_credit'] - $acc['trials']['opn_debit']);
+                    $spreadsheet->getSheet($key)->fromArray([$acc_closing], NULL, 'D'.$j);
+                    $spreadsheet->getSheet($key)->fromArray([$acc_opening], NULL, 'E'.$j);
+                    $spreadsheet->getSheet($key)->fromArray([$acc_closing - $acc_opening], NULL, 'F'.$j);
+                    // $spreadsheet->getSheet($key)->fromArray(['0'], NULL, 'G'.$j);
+                    // $spreadsheet->getSheet($key)->fromArray(['0'], NULL, 'H'.$j);
+                    $j++;
+                $clos += abs($acc['trials']['cls_credit'] - $acc['trials']['cls_debit']);
+                $open += abs($acc['trials']['opn_credit'] - $acc['trials']['opn_debit']);
+               // $acc_cls += abs($acc['trials']['cls_credit'] - $acc['trials']['cls_debit']);
+                // $acc_opn += abs($acc['trials']['opn_credit'] - $acc['trials']['opn_debit']);
+            }
+            $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
+
+            $j++;
+            $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
+
             $spreadsheet->getSheet($key)->fromArray(['TOTAL'], NULL, 'B'.$j);
             $spreadsheet->getSheet($key)->fromArray([$clos], NULL, 'D'.$j);
             $spreadsheet->getSheet($key)->fromArray([$open], NULL, 'E'.$j);
@@ -315,41 +375,6 @@ public function excel1($acc_grp, $key, $spreadsheet){
             $resu = ($clos/$divi)*100;
             $spreadsheet->getSheet($key)->fromArray([round($resu, 2) . '%'], NULL, 'G'.$j);
 
-            $acc_cls = $acc_opn = 0;
-            foreach($acc_grp['accounts'] as $k => $acc)
-            // foreach($acc_grp['children'] as $k => $children)
-            {
-            $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
-
-                // foreach($children['accounts'] as $acc)
-                // {
-                    $spreadsheet->getSheet($key)->fromArray([$k+1], NULL, 'A'.$j);
-                    $spreadsheet->getSheet($key)->fromArray([$acc['name']], NULL, 'B'.$j);
-                    $spreadsheet->getSheet($key)->fromArray([$acc['number']], NULL, 'C'.$j);
-                    // $this->sum=0;
-                    // $this->acc_sum($children);
-                    $spreadsheet->getSheet($key)->fromArray([abs($acc['trials']['cls_credit'] - $acc['trials']['cls_debit'])], NULL, 'E'.$j);
-                    $spreadsheet->getSheet($key)->fromArray([abs($acc['trials']['opn_credit'] - $acc['trials']['opn_debit'])], NULL, 'F'.$j);
-                    // $spreadsheet->getSheet($key)->fromArray(['0'], NULL, 'G'.$j);
-                    // $spreadsheet->getSheet($key)->fromArray(['0'], NULL, 'H'.$j);
-                    $j++;
-                // }
-                $acc_cls += abs($acc['trials']['cls_credit'] - $acc['trials']['cls_debit']);
-                $acc_opn += abs($acc['trials']['opn_credit'] - $acc['trials']['opn_debit']);
-
-
-
-            }
-            $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
-
-            $j++;
-            $spreadsheet->getSheet($key)->getStyle('A'.$j.':G'.$j)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_DOUBLE);
-
-
-            $spreadsheet->getSheet($key)->fromArray(['TOTAL'], NULL, 'B'.$j);
-            $spreadsheet->getSheet($key)->fromArray([$acc_cls], NULL, 'D'.$j);
-            $spreadsheet->getSheet($key)->fromArray([$acc_opn], NULL, 'E'.$j);
-
             foreach($acc_grp['children'] as $k => $children){
 	            $this->excel1($children, $k,$spreadsheet);
 	    }
@@ -357,17 +382,18 @@ public function excel1($acc_grp, $key, $spreadsheet){
 
     }
 
-    public $opn=0;
-    public $cls=0;
-    public $dif=0;
     public function acc_sum($acc_grp)
     {
         if(count($acc_grp['accounts']) >> 0)
         {
             foreach($acc_grp['accounts'] as $acc)
             {
-                $this->opn += abs($acc['trials']['opn_debit'] - $acc['trials']['opn_credit']);
-                $this->cls  += abs($acc['trials']['cls_debit'] - $acc['trials']['cls_credit']);
+                $this->opn_credt += $acc['trials']['opn_credit'];
+                $this->opn_debt += $acc['trials']['opn_debit'];
+                $this->cls_credt += $acc['trials']['cls_credit'];
+                $this->cls_debt += $acc['trials']['cls_debit'];
+                // $this->opn += abs($acc['trials']['opn_debit'] - $acc['trials']['opn_credit']);
+                // $this->cls += abs($acc['trials']['cls_debit'] - $acc['trials']['cls_credit']);
                 // $this->dif += $this->cls - $this->opn;
             }
 
