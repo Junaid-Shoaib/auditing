@@ -125,9 +125,12 @@ class Excel extends Controller
                         $acc_num = $row->getCellAtIndex($total_col-7)->getValue();
                         if($acc_name && $acc_num)
                         {
-                            $acc_exist = Account::where('name', $acc_name)->
+                            $acc_exist = Account::
                                 where('group_id', $fgn_grp_id)->
                                 where('company_id', session('company_id'))->
+                                where(function ($query) use($acc_name, $acc_num) {
+                                    $query->where('name', $acc_name)->orWhere('number', $acc_num);
+                                })->
                                 first();
                             if(!$acc_exist)
                             {
